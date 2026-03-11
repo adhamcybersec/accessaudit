@@ -118,15 +118,17 @@
 
 ---
 
-## Phase 2 Features (Future)
+## Phase 2 Features ✅ COMPLETE
 
-- [ ] Azure AD connector
-- [ ] GCP IAM connector  
-- [ ] ML-based anomaly detection
-- [ ] Web dashboard (React)
-- [ ] Compliance report templates (SOC 2, ISO 27001)
-- [ ] Policy-as-code framework
-- [ ] API server (FastAPI)
+- [x] Azure AD connector
+- [x] GCP IAM connector
+- [x] ML-based anomaly detection (Isolation Forest)
+- [x] Web dashboard (HTMX + Tailwind CSS)
+- [x] Compliance report templates (SOC 2, ISO 27001, CIS AWS)
+- [x] OPA/Rego policy engine with rule packs
+- [x] API server (FastAPI)
+- [x] HTML + PDF report generation
+- [x] Integration tests for Phase 2 features
 
 ## Phase 3 Features (Future)
 
