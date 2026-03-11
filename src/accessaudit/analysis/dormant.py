@@ -67,7 +67,9 @@ class DormantAccountAnalyzer:
             metadata={
                 "days_inactive": days_inactive,
                 "threshold": self.dormant_threshold_days,
-                "last_activity": account.last_activity.isoformat() if account.last_activity else None,
+                "last_activity": (
+                    account.last_activity.isoformat() if account.last_activity else None
+                ),
                 "last_login": account.last_login.isoformat() if account.last_login else None,
             },
         )

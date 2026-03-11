@@ -111,7 +111,7 @@ async def test_validate_rules(client):
     """POST /api/v1/rules/validate returns validation result."""
     response = await client.post(
         "/api/v1/rules/validate",
-        json={"policy": "package test\ndeny[msg] { msg := \"test\" }"},
+        json={"policy": 'package test\ndeny[msg] { msg := "test" }'},
     )
     assert response.status_code == 200
     data = response.json()

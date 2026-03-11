@@ -32,15 +32,18 @@ async def dashboard_home(request: Request):
 
     recent_scans = list(scans.values())[-10:]
 
-    return templates.TemplateResponse("dashboard.html", {
-        "request": request,
-        "total_scans": total_scans,
-        "completed_scans": completed_scans,
-        "running_scans": running_scans,
-        "total_findings": len(all_findings),
-        "recent_scans": recent_scans,
-        "findings": all_findings[:20],
-    })
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "total_scans": total_scans,
+            "completed_scans": completed_scans,
+            "running_scans": running_scans,
+            "total_findings": len(all_findings),
+            "recent_scans": recent_scans,
+            "findings": all_findings[:20],
+        },
+    )
 
 
 @router.get("/scans", response_class=None)
@@ -49,11 +52,14 @@ async def scans_page(request: Request):
     scans_list = list(request.app.state.scans.values())
     has_running = any(s.status in ("running", "pending") for s in scans_list)
 
-    return templates.TemplateResponse("scans.html", {
-        "request": request,
-        "scans": scans_list,
-        "has_running": has_running,
-    })
+    return templates.TemplateResponse(
+        "scans.html",
+        {
+            "request": request,
+            "scans": scans_list,
+            "has_running": has_running,
+        },
+    )
 
 
 @router.get("/findings", response_class=None)
@@ -79,12 +85,15 @@ async def findings_page(
     if category:
         all_findings = [f for f in all_findings if f.get("category") == category]
 
-    return templates.TemplateResponse("findings.html", {
-        "request": request,
-        "findings": all_findings,
-        "severity_filter": severity,
-        "category_filter": category,
-    })
+    return templates.TemplateResponse(
+        "findings.html",
+        {
+            "request": request,
+            "findings": all_findings,
+            "severity_filter": severity,
+            "category_filter": category,
+        },
+    )
 
 
 @router.get("/reports", response_class=None)
@@ -93,11 +102,14 @@ async def reports_page(request: Request):
     scans = list(request.app.state.scans.values())
     analyses = request.app.state.analyses
 
-    return templates.TemplateResponse("reports.html", {
-        "request": request,
-        "scans": scans,
-        "analyses": analyses,
-    })
+    return templates.TemplateResponse(
+        "reports.html",
+        {
+            "request": request,
+            "scans": scans,
+            "analyses": analyses,
+        },
+    )
 
 
 @router.get("/rules-dashboard", response_class=None)
@@ -108,12 +120,17 @@ async def rules_page(request: Request):
     engine = PolicyEngine()
     rules = []
     for rule_file in engine.rule_files:
-        rules.append({
-            "file": rule_file,
-            "name": Path(rule_file).stem,
-        })
+        rules.append(
+            {
+                "file": rule_file,
+                "name": Path(rule_file).stem,
+            }
+        )
 
-    return templates.TemplateResponse("rules.html", {
-        "request": request,
-        "rules": rules,
-    })
+    return templates.TemplateResponse(
+        "rules.html",
+        {
+            "request": request,
+            "rules": rules,
+        },
+    )

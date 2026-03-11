@@ -14,9 +14,7 @@ FRAMEWORK_CONTROLS = {
 class ComplianceMapper:
     """Maps security findings to compliance framework controls."""
 
-    def map_findings(
-        self, framework: str, findings: list[Finding]
-    ) -> list[dict]:
+    def map_findings(self, framework: str, findings: list[Finding]) -> list[dict]:
         """Map findings to compliance framework controls.
 
         Args:
@@ -38,15 +36,15 @@ class ComplianceMapper:
 
         result = []
         for control_id, control in controls.items():
-            matched_findings = [
-                f for f in findings if f.category in control["categories"]
-            ]
-            result.append({
-                "control_id": control_id,
-                "control_name": control["name"],
-                "description": control["description"],
-                "findings": matched_findings,
-                "status": "fail" if matched_findings else "pass",
-            })
+            matched_findings = [f for f in findings if f.category in control["categories"]]
+            result.append(
+                {
+                    "control_id": control_id,
+                    "control_name": control["name"],
+                    "description": control["description"],
+                    "findings": matched_findings,
+                    "status": "fail" if matched_findings else "pass",
+                }
+            )
 
         return result

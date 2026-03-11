@@ -41,7 +41,9 @@ class TestGCPListAccounts:
     async def test_list_accounts_returns_service_accounts(self, connector):
         mock_sas = [
             make_gcp_service_account(email="sa1@proj.iam.gserviceaccount.com", unique_id="sa-1"),
-            make_gcp_service_account(email="sa2@proj.iam.gserviceaccount.com", unique_id="sa-2", disabled=True),
+            make_gcp_service_account(
+                email="sa2@proj.iam.gserviceaccount.com", unique_id="sa-2", disabled=True
+            ),
         ]
 
         with patch.object(connector, "_fetch_service_accounts", return_value=mock_sas):
@@ -73,11 +75,15 @@ class TestGCPGetAccountPermissions:
     @pytest.mark.asyncio
     async def test_get_permissions_from_bindings(self, connector):
         mock_bindings = [
-            make_gcp_iam_binding(role="roles/editor", members=["serviceAccount:sa1@proj.iam.gserviceaccount.com"]),
+            make_gcp_iam_binding(
+                role="roles/editor", members=["serviceAccount:sa1@proj.iam.gserviceaccount.com"]
+            ),
         ]
 
         with patch.object(connector, "_fetch_iam_bindings", return_value=mock_bindings):
-            permissions = await connector.get_account_permissions("sa1@proj.iam.gserviceaccount.com")
+            permissions = await connector.get_account_permissions(
+                "sa1@proj.iam.gserviceaccount.com"
+            )
 
         assert len(permissions) == 1
         assert permissions[0].account_id == "sa1@proj.iam.gserviceaccount.com"

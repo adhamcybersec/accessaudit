@@ -93,16 +93,12 @@ class Rule:
             # AND logic
             if " and " in condition:
                 parts = condition.split(" and ")
-                return all(
-                    self._evaluate_simple_condition(part.strip(), context) for part in parts
-                )
+                return all(self._evaluate_simple_condition(part.strip(), context) for part in parts)
 
             # OR logic
             if " or " in condition:
                 parts = condition.split(" or ")
-                return any(
-                    self._evaluate_simple_condition(part.strip(), context) for part in parts
-                )
+                return any(self._evaluate_simple_condition(part.strip(), context) for part in parts)
 
             return self._evaluate_simple_condition(condition, context)
 

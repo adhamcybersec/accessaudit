@@ -10,12 +10,14 @@ from accessaudit.models import Account, AccountStatus, Permission, Policy
 try:
     from azure.identity import ClientSecretCredential
     from azure.mgmt.authorization import AuthorizationManagementClient
+
     HAS_AZURE = True
 except ImportError:
     HAS_AZURE = False
 
 try:
     import httpx
+
     HAS_HTTPX = True
 except ImportError:
     HAS_HTTPX = False
@@ -96,7 +98,9 @@ class AzureConnector(BaseConnector):
                     pass
 
             # Groups
-            groups = [m.get("displayName", "") for m in user.get("memberOf", []) if m.get("displayName")]
+            groups = [
+                m.get("displayName", "") for m in user.get("memberOf", []) if m.get("displayName")
+            ]
 
             # Admin check
             is_admin = user_id in admin_members.get("Global Administrator", set())
@@ -162,7 +166,9 @@ class AzureConnector(BaseConnector):
                     pass
 
             upn = user.get("userPrincipalName", "")
-            groups = [m.get("displayName", "") for m in user.get("memberOf", []) if m.get("displayName")]
+            groups = [
+                m.get("displayName", "") for m in user.get("memberOf", []) if m.get("displayName")
+            ]
             status = AccountStatus.ACTIVE if user.get("accountEnabled") else AccountStatus.DISABLED
 
             # Check admin role membership
@@ -253,7 +259,9 @@ class AzureConnector(BaseConnector):
         # Directory roles
         dir_roles = await self._fetch_directory_roles_for_user(account_id)
         for role in dir_roles:
-            perm_id = hashlib.md5(f"azure-dir-role:{account_id}:{role['id']}".encode()).hexdigest()[:16]
+            perm_id = hashlib.md5(f"azure-dir-role:{account_id}:{role['id']}".encode()).hexdigest()[
+                :16
+            ]
             permission = Permission(
                 id=f"perm-{perm_id}",
                 account_id=account_id,
@@ -274,7 +282,9 @@ class AzureConnector(BaseConnector):
             props = assignment.get("properties", {})
             scope = props.get("scope", "")
 
-            perm_id = hashlib.md5(f"azure-rbac:{account_id}:{assignment['id']}".encode()).hexdigest()[:16]
+            perm_id = hashlib.md5(
+                f"azure-rbac:{account_id}:{assignment['id']}".encode()
+            ).hexdigest()[:16]
             permission = Permission(
                 id=f"perm-{perm_id}",
                 account_id=account_id,
@@ -332,9 +342,7 @@ class AzureConnector(BaseConnector):
 
     async def _fetch_user_mfa_status(self) -> dict[str, bool]:
         """Fetch MFA registration status for all users."""
-        result = await self._graph_get(
-            "/reports/authenticationMethods/userRegistrationDetails"
-        )
+        result = await self._graph_get("/reports/authenticationMethods/userRegistrationDetails")
         if not result:
             return {}
 
@@ -371,9 +379,11 @@ class AzureConnector(BaseConnector):
             return []
 
         try:
-            definitions = list(self._auth_client.role_definitions.list(
-                scope=f"/subscriptions/{self.subscription_id}"
-            ))
+            definitions = list(
+                self._auth_client.role_definitions.list(
+                    scope=f"/subscriptions/{self.subscription_id}"
+                )
+            )
             return [d.as_dict() for d in definitions]
         except Exception:
             return []
@@ -384,10 +394,12 @@ class AzureConnector(BaseConnector):
             return []
 
         try:
-            assignments = list(self._auth_client.role_assignments.list_for_scope(
-                scope=f"/subscriptions/{self.subscription_id}",
-                filter=f"principalId eq '{principal_id}'"
-            ))
+            assignments = list(
+                self._auth_client.role_assignments.list_for_scope(
+                    scope=f"/subscriptions/{self.subscription_id}",
+                    filter=f"principalId eq '{principal_id}'",
+                )
+            )
             result = []
             for a in assignments:
                 a_dict = a.as_dict()

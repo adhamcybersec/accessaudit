@@ -42,9 +42,7 @@ class Policy(BaseModel):
                 "policy_type": "managed",
                 "document": {
                     "Version": "2012-10-17",
-                    "Statement": [
-                        {"Effect": "Allow", "Action": "*", "Resource": "*"}
-                    ],
+                    "Statement": [{"Effect": "Allow", "Action": "*", "Resource": "*"}],
                 },
                 "attached_to": ["arn:aws:iam::123456789012:user/admin"],
                 "is_aws_managed": True,

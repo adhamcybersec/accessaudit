@@ -150,11 +150,13 @@ class TestAWSConnector:
 
     def test_connector_initialization(self):
         """Test connector initialization."""
-        connector = AWSConnector({
-            "region": "eu-west-1",
-            "access_key_id": "AKIAEXAMPLE",
-            "secret_access_key": "secret",
-        })
+        connector = AWSConnector(
+            {
+                "region": "eu-west-1",
+                "access_key_id": "AKIAEXAMPLE",
+                "secret_access_key": "secret",
+            }
+        )
 
         assert connector.region == "eu-west-1"
         assert connector.config["access_key_id"] == "AKIAEXAMPLE"

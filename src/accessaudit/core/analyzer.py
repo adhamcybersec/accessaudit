@@ -46,13 +46,17 @@ class Analyzer:
         # Initialize analyzers
         analysis_config = self.config.get("analysis", {})
 
-        self.permission_analyzer = PermissionAnalyzer({
-            "max_permissions_threshold": analysis_config.get("max_permissions_threshold", 50),
-        })
+        self.permission_analyzer = PermissionAnalyzer(
+            {
+                "max_permissions_threshold": analysis_config.get("max_permissions_threshold", 50),
+            }
+        )
 
-        self.dormant_analyzer = DormantAccountAnalyzer({
-            "dormant_threshold_days": analysis_config.get("dormant_threshold_days", 90),
-        })
+        self.dormant_analyzer = DormantAccountAnalyzer(
+            {
+                "dormant_threshold_days": analysis_config.get("dormant_threshold_days", 90),
+            }
+        )
 
         # Initialize anomaly detector
         anomaly_config = analysis_config.get("anomaly", {})
@@ -136,15 +140,11 @@ class Analyzer:
         # Generate summary
         result.summary = self._generate_summary(scan_result, result.findings)
 
-        print(
-            f"[{scan_result.scan_id}] Analysis complete: {len(result.findings)} findings"
-        )
+        print(f"[{scan_result.scan_id}] Analysis complete: {len(result.findings)} findings")
 
         return result
 
-    def _generate_summary(
-        self, scan_result: ScanResult, findings: list[Finding]
-    ) -> dict[str, Any]:
+    def _generate_summary(self, scan_result: ScanResult, findings: list[Finding]) -> dict[str, Any]:
         """Generate analysis summary.
 
         Args:

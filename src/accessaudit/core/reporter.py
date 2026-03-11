@@ -122,17 +122,19 @@ class Reporter:
 
         for account in scan_result.accounts:
             permissions = scan_result.permissions.get(account.id, [])
-            accounts.append({
-                "id": account.id,
-                "username": account.username,
-                "provider": account.provider,
-                "mfa_enabled": account.mfa_enabled,
-                "has_admin_role": account.has_admin_role,
-                "groups": account.groups,
-                "permission_count": len(permissions),
-                "is_dormant": account.is_dormant(),
-                "days_since_activity": account.days_since_activity(),
-            })
+            accounts.append(
+                {
+                    "id": account.id,
+                    "username": account.username,
+                    "provider": account.provider,
+                    "mfa_enabled": account.mfa_enabled,
+                    "has_admin_role": account.has_admin_role,
+                    "groups": account.groups,
+                    "permission_count": len(permissions),
+                    "is_dormant": account.is_dormant(),
+                    "days_since_activity": account.days_since_activity(),
+                }
+            )
 
         return accounts
 
@@ -152,53 +154,62 @@ class Reporter:
             f for f in analysis_result.findings if f.severity == FindingSeverity.CRITICAL
         ]
         if critical_findings:
-            recommendations.append({
-                "priority": 1,
-                "title": "Address Critical Security Issues",
-                "description": f"Found {len(critical_findings)} critical security issues that require immediate attention.",
-                "actions": list(set(f.remediation for f in critical_findings[:3])),
-            })
+            recommendations.append(
+                {
+                    "priority": 1,
+                    "title": "Address Critical Security Issues",
+                    "description": f"Found {len(critical_findings)} critical security issues that require immediate attention.",
+                    "actions": list(set(f.remediation for f in critical_findings[:3])),
+                }
+            )
 
         # Check for MFA issues
-        mfa_findings = [
-            f for f in analysis_result.findings if "mfa" in f.category.value.lower()
-        ]
+        mfa_findings = [f for f in analysis_result.findings if "mfa" in f.category.value.lower()]
         if mfa_findings:
-            recommendations.append({
-                "priority": 2,
-                "title": "Enable MFA for Privileged Accounts",
-                "description": f"Found {len(mfa_findings)} accounts without MFA enabled.",
-                "actions": ["Enable MFA for all administrative accounts", "Implement MFA enforcement policy"],
-            })
+            recommendations.append(
+                {
+                    "priority": 2,
+                    "title": "Enable MFA for Privileged Accounts",
+                    "description": f"Found {len(mfa_findings)} accounts without MFA enabled.",
+                    "actions": [
+                        "Enable MFA for all administrative accounts",
+                        "Implement MFA enforcement policy",
+                    ],
+                }
+            )
 
         # Check for dormant accounts
         dormant_findings = [
             f for f in analysis_result.findings if "dormant" in f.category.value.lower()
         ]
         if dormant_findings:
-            recommendations.append({
-                "priority": 3,
-                "title": "Review and Remove Dormant Accounts",
-                "description": f"Found {len(dormant_findings)} dormant accounts that may pose security risks.",
-                "actions": [
-                    "Review each dormant account with team leads",
-                    "Disable accounts no longer in use",
-                    "Implement automated dormant account detection",
-                ],
-            })
+            recommendations.append(
+                {
+                    "priority": 3,
+                    "title": "Review and Remove Dormant Accounts",
+                    "description": f"Found {len(dormant_findings)} dormant accounts that may pose security risks.",
+                    "actions": [
+                        "Review each dormant account with team leads",
+                        "Disable accounts no longer in use",
+                        "Implement automated dormant account detection",
+                    ],
+                }
+            )
 
         # General recommendations
         if analysis_result.summary.get("total_findings", 0) > 10:
-            recommendations.append({
-                "priority": 4,
-                "title": "Implement Regular Access Reviews",
-                "description": "High number of findings suggests lack of regular access reviews.",
-                "actions": [
-                    "Schedule quarterly access reviews",
-                    "Implement automated permission monitoring",
-                    "Consider implementing just-in-time access",
-                ],
-            })
+            recommendations.append(
+                {
+                    "priority": 4,
+                    "title": "Implement Regular Access Reviews",
+                    "description": "High number of findings suggests lack of regular access reviews.",
+                    "actions": [
+                        "Schedule quarterly access reviews",
+                        "Implement automated permission monitoring",
+                        "Consider implementing just-in-time access",
+                    ],
+                }
+            )
 
         return recommendations
 
@@ -246,27 +257,35 @@ class Reporter:
         severity_counts = summary.get("findings_by_severity", {})
         for severity in ["critical", "high", "medium", "low", "info"]:
             count = severity_counts.get(severity, 0)
-            indicator = "🔴" if severity == "critical" else ("🟠" if severity == "high" else ("🟡" if severity == "medium" else "🟢"))
+            indicator = (
+                "🔴"
+                if severity == "critical"
+                else ("🟠" if severity == "high" else ("🟡" if severity == "medium" else "🟢"))
+            )
             lines.append(f"  {indicator} {severity.upper():10} {count}")
 
-        lines.extend([
-            "",
-            "-" * 60,
-            "                    Top Findings",
-            "-" * 60,
-            "",
-        ])
+        lines.extend(
+            [
+                "",
+                "-" * 60,
+                "                    Top Findings",
+                "-" * 60,
+                "",
+            ]
+        )
 
         for i, finding in enumerate(summary.get("top_findings", [])[:5], 1):
             lines.append(f"  {i}. [{finding['severity'].upper()}] {finding['title']}")
             lines.append(f"     Account: {finding['account']}")
             lines.append("")
 
-        lines.extend([
-            "=" * 60,
-            "  Report generated by AccessAudit v0.1.0",
-            "=" * 60,
-        ])
+        lines.extend(
+            [
+                "=" * 60,
+                "  Report generated by AccessAudit v0.1.0",
+                "=" * 60,
+            ]
+        )
 
         return "\n".join(lines)
 
@@ -346,9 +365,7 @@ class Reporter:
         """
         import weasyprint
 
-        html = await self.generate_html_report(
-            scan_result, analysis_result, template=template
-        )
+        html = await self.generate_html_report(scan_result, analysis_result, template=template)
 
         pdf_bytes = weasyprint.HTML(string=html).write_pdf()
 

@@ -28,9 +28,7 @@ ISO27001_CONTROLS: dict[str, dict] = {
     },
     "A.9.2.5": {
         "name": "Review of User Access Rights",
-        "description": (
-            "Asset owners shall review users' access rights at regular intervals."
-        ),
+        "description": ("Asset owners shall review users' access rights at regular intervals."),
         "categories": [
             FindingCategory.DORMANT_ACCOUNT,
             FindingCategory.UNUSED_CREDENTIALS,

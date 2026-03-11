@@ -28,6 +28,7 @@ from accessaudit.models import (
 # Shared test data factories
 # ---------------------------------------------------------------------------
 
+
 def _aws_accounts() -> list[Account]:
     return [
         Account(
@@ -274,6 +275,7 @@ def _gcp_policies() -> list[Policy]:
 # list_accounts / get_account_permissions / list_policies return test data.
 # ---------------------------------------------------------------------------
 
+
 def _mock_connector(connector_cls, accounts, permissions, policies):
     """Return a patched connector whose async methods return canned data."""
     instance = AsyncMock(spec=connector_cls)
@@ -292,6 +294,7 @@ def _mock_connector(connector_cls, accounts, permissions, policies):
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
+
 
 class TestMultiProviderScanPipeline:
     """Full scan -> analyze -> report pipeline with mocked providers."""
@@ -472,7 +475,14 @@ class TestMultiProviderScanPipeline:
         reporter = Reporter()
         report = await reporter.generate_json_report(scan_result, analysis)
 
-        required_keys = {"report_metadata", "scan", "analysis", "findings", "accounts", "recommendations"}
+        required_keys = {
+            "report_metadata",
+            "scan",
+            "analysis",
+            "findings",
+            "accounts",
+            "recommendations",
+        }
         assert required_keys.issubset(report.keys())
 
         # Scan section

@@ -31,6 +31,7 @@ from accessaudit.models import (
 # Test data
 # ---------------------------------------------------------------------------
 
+
 def _build_scan_result(scan_id: str) -> ScanResult:
     """Build a realistic completed ScanResult for testing."""
     accounts = [
@@ -120,6 +121,7 @@ def _build_scan_result(scan_id: str) -> ScanResult:
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def app():
     """Create a fresh FastAPI app for each test."""
@@ -138,6 +140,7 @@ def client(app):
 # ---------------------------------------------------------------------------
 # Tests
 # ---------------------------------------------------------------------------
+
 
 class TestAPIWorkflow:
     """End-to-end API workflow tests."""

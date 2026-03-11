@@ -189,9 +189,7 @@ class TestPolicy:
             policy_type="customer-managed",
             document={
                 "Version": "2012-10-17",
-                "Statement": [
-                    {"Effect": "Allow", "Action": "s3:GetObject", "Resource": "*"}
-                ],
+                "Statement": [{"Effect": "Allow", "Action": "s3:GetObject", "Resource": "*"}],
             },
         )
         assert policy.name == "TestPolicy"

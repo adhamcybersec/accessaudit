@@ -41,13 +41,17 @@ class TestSOC2Controls:
         from accessaudit.core.compliance.soc2 import SOC2_CONTROLS
 
         categories = SOC2_CONTROLS["CC6.2"]["categories"]
-        assert FindingCategory.WEAK_PASSWORD in categories or FindingCategory.MISSING_MFA in categories
+        assert (
+            FindingCategory.WEAK_PASSWORD in categories or FindingCategory.MISSING_MFA in categories
+        )
 
     def test_soc2_cc7_1_maps_to_monitoring(self):
         from accessaudit.core.compliance.soc2 import SOC2_CONTROLS
 
         categories = SOC2_CONTROLS["CC7.1"]["categories"]
-        assert FindingCategory.ANOMALY in categories or FindingCategory.DORMANT_ACCOUNT in categories
+        assert (
+            FindingCategory.ANOMALY in categories or FindingCategory.DORMANT_ACCOUNT in categories
+        )
 
 
 class TestISO27001Controls:
@@ -80,19 +84,27 @@ class TestISO27001Controls:
         from accessaudit.core.compliance.iso27001 import ISO27001_CONTROLS
 
         categories = ISO27001_CONTROLS["A.9.2.3"]["categories"]
-        assert FindingCategory.OVERPRIVILEGED_ROLE in categories or FindingCategory.EXCESSIVE_PERMISSIONS in categories
+        assert (
+            FindingCategory.OVERPRIVILEGED_ROLE in categories
+            or FindingCategory.EXCESSIVE_PERMISSIONS in categories
+        )
 
     def test_iso27001_a925_maps_to_access_review(self):
         from accessaudit.core.compliance.iso27001 import ISO27001_CONTROLS
 
         categories = ISO27001_CONTROLS["A.9.2.5"]["categories"]
-        assert FindingCategory.DORMANT_ACCOUNT in categories or FindingCategory.UNUSED_CREDENTIALS in categories
+        assert (
+            FindingCategory.DORMANT_ACCOUNT in categories
+            or FindingCategory.UNUSED_CREDENTIALS in categories
+        )
 
 
 class TestComplianceMapper:
     """Tests for the ComplianceMapper class."""
 
-    def _make_finding(self, category: FindingCategory, severity: FindingSeverity = FindingSeverity.HIGH) -> Finding:
+    def _make_finding(
+        self, category: FindingCategory, severity: FindingSeverity = FindingSeverity.HIGH
+    ) -> Finding:
         return Finding(
             id="test-001",
             severity=severity,

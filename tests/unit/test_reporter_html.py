@@ -77,8 +77,16 @@ def _make_analysis_result() -> AnalysisResult:
                 "info": 0,
             },
             "top_findings": [
-                {"severity": "critical", "title": "Admin has wildcard permissions", "account": "admin"},
-                {"severity": "high", "title": "MFA not enabled for privileged user", "account": "dev"},
+                {
+                    "severity": "critical",
+                    "title": "Admin has wildcard permissions",
+                    "account": "admin",
+                },
+                {
+                    "severity": "high",
+                    "title": "MFA not enabled for privileged user",
+                    "account": "dev",
+                },
             ],
         },
     )
@@ -111,9 +119,7 @@ class TestHTMLReportGeneration:
         scan_result = _make_scan_result()
         analysis_result = _make_analysis_result()
 
-        html = await reporter.generate_html_report(
-            scan_result, analysis_result, template="soc2"
-        )
+        html = await reporter.generate_html_report(scan_result, analysis_result, template="soc2")
 
         assert isinstance(html, str)
         assert "SOC 2" in html or "CC6" in html
@@ -196,9 +202,7 @@ class TestHTMLReportGeneration:
         scan_result = _make_scan_result()
         analysis_result = _make_analysis_result()
 
-        html = await reporter.generate_html_report(
-            scan_result, analysis_result, template="soc2"
-        )
+        html = await reporter.generate_html_report(scan_result, analysis_result, template="soc2")
 
         # Should mention specific controls
         assert "CC6.1" in html

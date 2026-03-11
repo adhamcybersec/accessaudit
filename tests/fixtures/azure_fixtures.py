@@ -17,9 +17,13 @@ def make_azure_user(
         "userPrincipalName": upn,
         "accountEnabled": account_enabled,
         "createdDateTime": "2025-01-15T10:00:00Z",
-        "signInActivity": {
-            "lastSignInDateTime": last_sign_in,
-        } if last_sign_in else None,
+        "signInActivity": (
+            {
+                "lastSignInDateTime": last_sign_in,
+            }
+            if last_sign_in
+            else None
+        ),
         "memberOf": [{"displayName": g} for g in (member_of or [])],
     }
 

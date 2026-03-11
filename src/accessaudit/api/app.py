@@ -19,8 +19,8 @@ def create_app() -> FastAPI:
     )
 
     # In-memory stores
-    app.state.scans = {}       # scan_id -> ScanResult
-    app.state.analyses = {}    # scan_id -> AnalysisResult
+    app.state.scans = {}  # scan_id -> ScanResult
+    app.state.analyses = {}  # scan_id -> AnalysisResult
 
     # Register routers
     app.include_router(health.router)

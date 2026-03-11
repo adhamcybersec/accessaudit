@@ -175,14 +175,26 @@ MOCK_ACCESS_KEY_LAST_USED = {
 # Mock groups
 MOCK_GROUPS = {
     "admin-user": [
-        {"GroupName": "Administrators", "GroupId": "AGPAEXAMPLE1111", "Arn": "arn:aws:iam::123456789012:group/Administrators"},
+        {
+            "GroupName": "Administrators",
+            "GroupId": "AGPAEXAMPLE1111",
+            "Arn": "arn:aws:iam::123456789012:group/Administrators",
+        },
     ],
     "regular-user": [
-        {"GroupName": "Developers", "GroupId": "AGPAEXAMPLE2222", "Arn": "arn:aws:iam::123456789012:group/Developers"},
+        {
+            "GroupName": "Developers",
+            "GroupId": "AGPAEXAMPLE2222",
+            "Arn": "arn:aws:iam::123456789012:group/Developers",
+        },
     ],
     "dormant-user": [],
     "service-account": [
-        {"GroupName": "ServiceAccounts", "GroupId": "AGPAEXAMPLE3333", "Arn": "arn:aws:iam::123456789012:group/ServiceAccounts"},
+        {
+            "GroupName": "ServiceAccounts",
+            "GroupId": "AGPAEXAMPLE3333",
+            "Arn": "arn:aws:iam::123456789012:group/ServiceAccounts",
+        },
     ],
 }
 

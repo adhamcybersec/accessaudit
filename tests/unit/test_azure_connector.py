@@ -44,7 +44,9 @@ class TestAzureListAccounts:
         """Should convert Azure AD users to Account models."""
         mock_users = [
             make_azure_user(user_id="u1", display_name="Alice", upn="alice@contoso.com"),
-            make_azure_user(user_id="u2", display_name="Bob", upn="bob@contoso.com", account_enabled=False),
+            make_azure_user(
+                user_id="u2", display_name="Bob", upn="bob@contoso.com", account_enabled=False
+            ),
         ]
 
         with patch.object(connector, "_fetch_users", return_value=mock_users):
@@ -63,7 +65,14 @@ class TestAzureListPolicies:
     async def test_list_policies_returns_rbac_roles(self, connector):
         """Should return RBAC role definitions as Policy models."""
         mock_roles = [
-            {"id": "/role-def/owner", "properties": {"roleName": "Owner", "permissions": [{"actions": ["*"]}], "type": "BuiltInRole"}},
+            {
+                "id": "/role-def/owner",
+                "properties": {
+                    "roleName": "Owner",
+                    "permissions": [{"actions": ["*"]}],
+                    "type": "BuiltInRole",
+                },
+            },
         ]
 
         with patch.object(connector, "_fetch_rbac_role_definitions", return_value=mock_roles):
@@ -82,7 +91,9 @@ class TestAzureGetAccountPermissions:
             make_azure_rbac_assignment(principal_id="u1", role_definition_name="Contributor"),
         ]
 
-        with patch.object(connector, "_fetch_rbac_assignments_for_principal", return_value=mock_assignments):
+        with patch.object(
+            connector, "_fetch_rbac_assignments_for_principal", return_value=mock_assignments
+        ):
             with patch.object(connector, "_fetch_directory_roles_for_user", return_value=[]):
                 permissions = await connector.get_account_permissions("u1")
 

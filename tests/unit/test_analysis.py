@@ -125,9 +125,7 @@ class TestPermissionAnalyzer:
 
         findings = await analyzer.analyze([regular_account], {regular_account.id: permissions})
 
-        excessive_findings = [
-            f for f in findings if "excessive" in f.title.lower()
-        ]
+        excessive_findings = [f for f in findings if "excessive" in f.title.lower()]
         assert len(excessive_findings) == 1
 
 

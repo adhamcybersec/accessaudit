@@ -60,9 +60,7 @@ class AnomalyDetector:
             if len(group_accounts) < self.min_group_size:
                 continue
 
-            group_findings = self._detect_in_group(
-                group_name, group_accounts, permissions
-            )
+            group_findings = self._detect_in_group(group_name, group_accounts, permissions)
             findings.extend(group_findings)
 
         return findings

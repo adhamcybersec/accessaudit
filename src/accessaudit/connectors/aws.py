@@ -193,9 +193,9 @@ class AWSConnector(BaseConnector):
                 group_name = group["GroupName"]
 
                 # Group attached policies
-                group_attached = self.iam_client.list_attached_group_policies(
-                    GroupName=group_name
-                )["AttachedPolicies"]
+                group_attached = self.iam_client.list_attached_group_policies(GroupName=group_name)[
+                    "AttachedPolicies"
+                ]
                 for policy_summary in group_attached:
                     policy_arn = policy_summary["PolicyArn"]
                     policy_perms = await self._extract_policy_permissions(policy_arn, account_id)
@@ -314,9 +314,7 @@ class AWSConnector(BaseConnector):
                 "AttachedPolicies"
             ]
             for policy in attached_policies:
-                if "AdministratorAccess" in policy["PolicyName"] or "Admin" in policy[
-                    "PolicyName"
-                ]:
+                if "AdministratorAccess" in policy["PolicyName"] or "Admin" in policy["PolicyName"]:
                     return True
 
             # Check groups for admin policies
@@ -326,9 +324,10 @@ class AWSConnector(BaseConnector):
                     GroupName=group["GroupName"]
                 )["AttachedPolicies"]
                 for policy in group_policies:
-                    if "AdministratorAccess" in policy["PolicyName"] or "Admin" in policy[
-                        "PolicyName"
-                    ]:
+                    if (
+                        "AdministratorAccess" in policy["PolicyName"]
+                        or "Admin" in policy["PolicyName"]
+                    ):
                         return True
 
         except Exception:
@@ -385,12 +384,16 @@ class AWSConnector(BaseConnector):
                 policy_type="managed" if is_aws_managed else "customer-managed",
                 document=policy_document,
                 attached_to=attached_entities,
-                created_at=policy_summary.get("CreateDate", "").isoformat()
-                if policy_summary.get("CreateDate")
-                else None,
-                updated_at=policy_summary.get("UpdateDate", "").isoformat()
-                if policy_summary.get("UpdateDate")
-                else None,
+                created_at=(
+                    policy_summary.get("CreateDate", "").isoformat()
+                    if policy_summary.get("CreateDate")
+                    else None
+                ),
+                updated_at=(
+                    policy_summary.get("UpdateDate", "").isoformat()
+                    if policy_summary.get("UpdateDate")
+                    else None
+                ),
                 is_aws_managed=is_aws_managed,
                 metadata={"policy_id": policy_summary.get("PolicyId")},
             )

@@ -24,10 +24,12 @@ async def list_rules() -> list[dict[str, Any]]:
     engine = PolicyEngine()
     rules = []
     for rule_file in engine.rule_files:
-        rules.append({
-            "file": rule_file,
-            "name": Path(rule_file).stem,
-        })
+        rules.append(
+            {
+                "file": rule_file,
+                "name": Path(rule_file).stem,
+            }
+        )
     return rules
 
 
@@ -60,7 +62,9 @@ async def validate_rule(body: ValidateRequest) -> dict[str, Any]:
 
         try:
             proc = await asyncio.create_subprocess_exec(
-                "opa", "check", tmp_path,
+                "opa",
+                "check",
+                tmp_path,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
             )

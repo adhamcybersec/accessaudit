@@ -9,12 +9,14 @@ from accessaudit.models import Account, AccountStatus, Permission, Policy
 try:
     from google.oauth2 import service_account
     from google.cloud import resourcemanager_v3
+
     HAS_GCP = True
 except ImportError:
     HAS_GCP = False
 
 try:
     import httpx
+
     HAS_HTTPX = True
 except ImportError:
     HAS_HTTPX = False
@@ -44,6 +46,7 @@ class GCPConnector(BaseConnector):
                 )
             else:
                 import google.auth
+
                 self._credentials, _ = google.auth.default(
                     scopes=["https://www.googleapis.com/auth/cloud-platform"]
                 )
@@ -189,6 +192,7 @@ class GCPConnector(BaseConnector):
 
         try:
             import google.auth.transport.requests
+
             self._credentials.refresh(google.auth.transport.requests.Request())
             url = f"https://iam.googleapis.com/v1/projects/{self.project_id}/serviceAccounts"
             headers = {"Authorization": f"Bearer {self._credentials.token}"}
@@ -208,6 +212,7 @@ class GCPConnector(BaseConnector):
 
         try:
             import google.auth.transport.requests
+
             self._credentials.refresh(google.auth.transport.requests.Request())
             url = f"https://cloudresourcemanager.googleapis.com/v1/projects/{self.project_id}:getIamPolicy"
             headers = {"Authorization": f"Bearer {self._credentials.token}"}
@@ -228,6 +233,7 @@ class GCPConnector(BaseConnector):
         roles = []
         try:
             import google.auth.transport.requests
+
             self._credentials.refresh(google.auth.transport.requests.Request())
             headers = {"Authorization": f"Bearer {self._credentials.token}"}
 

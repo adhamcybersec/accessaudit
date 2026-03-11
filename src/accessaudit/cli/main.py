@@ -76,7 +76,9 @@ scan_app = typer.Typer(help="Scan IAM providers")
 app.add_typer(scan_app, name="scan")
 
 
-def _run_scan(provider: str, provider_config: dict, output: Optional[str], no_analyze: bool) -> None:
+def _run_scan(
+    provider: str, provider_config: dict, output: Optional[str], no_analyze: bool
+) -> None:
     """Run a scan for the given provider with shared logic."""
     global _last_scan_result, _last_analysis_result
 
@@ -112,9 +114,7 @@ def _run_scan(provider: str, provider_config: dict, output: Optional[str], no_an
             # Generate report
             if output:
                 reporter = Reporter()
-                asyncio.run(
-                    reporter.generate_json_report(scan_result, analysis_result, output)
-                )
+                asyncio.run(reporter.generate_json_report(scan_result, analysis_result, output))
                 console.print(f"\n[green]✓[/green] Report saved to: {output}")
 
     except Exception as e:
@@ -289,7 +289,9 @@ def findings_list(
     console.print(table)
 
     if len(findings) > limit:
-        console.print(f"\n[dim]Showing {limit} of {len(findings)} findings. Use --limit to see more.[/dim]")
+        console.print(
+            f"\n[dim]Showing {limit} of {len(findings)} findings. Use --limit to see more.[/dim]"
+        )
 
 
 @findings_app.command("show")
@@ -322,16 +324,18 @@ def findings_show(
     }
     color = severity_colors.get(finding.severity.value, "white")
 
-    console.print(Panel(
-        f"[bold]{finding.title}[/bold]\n\n"
-        f"[{color}]Severity: {finding.severity.value.upper()}[/{color}]\n"
-        f"Category: {finding.category.value}\n"
-        f"Account: {finding.account_id}\n"
-        f"Detected: {finding.detected_at}\n\n"
-        f"[bold]Description:[/bold]\n{finding.description}\n\n"
-        f"[bold]Remediation:[/bold]\n{finding.remediation}",
-        title=f"Finding: {finding.id}",
-    ))
+    console.print(
+        Panel(
+            f"[bold]{finding.title}[/bold]\n\n"
+            f"[{color}]Severity: {finding.severity.value.upper()}[/{color}]\n"
+            f"Category: {finding.category.value}\n"
+            f"Account: {finding.account_id}\n"
+            f"Detected: {finding.detected_at}\n\n"
+            f"[bold]Description:[/bold]\n{finding.description}\n\n"
+            f"[bold]Remediation:[/bold]\n{finding.remediation}",
+            title=f"Finding: {finding.id}",
+        )
+    )
 
 
 # ============== REPORT COMMANDS ==============
@@ -366,7 +370,9 @@ def report_generate(
 
     valid_formats = ("json", "html", "pdf")
     if format not in valid_formats:
-        console.print(f"[red]Unsupported format: {format}. Choose from: {', '.join(valid_formats)}[/red]")
+        console.print(
+            f"[red]Unsupported format: {format}. Choose from: {', '.join(valid_formats)}[/red]"
+        )
         raise typer.Exit(1)
 
     valid_templates = ("executive", "soc2", "iso27001")
@@ -384,9 +390,7 @@ def report_generate(
     reporter = Reporter()
 
     if format == "json":
-        asyncio.run(
-            reporter.generate_json_report(_last_scan_result, _last_analysis_result, output)
-        )
+        asyncio.run(reporter.generate_json_report(_last_scan_result, _last_analysis_result, output))
         console.print(f"[green]✓[/green] JSON report saved to: {output}")
     elif format == "html":
         asyncio.run(
@@ -456,10 +460,12 @@ def config_show() -> None:
 
     import yaml
 
-    console.print(Panel(
-        yaml.dump(_config.to_dict(), default_flow_style=False),
-        title="Current Configuration",
-    ))
+    console.print(
+        Panel(
+            yaml.dump(_config.to_dict(), default_flow_style=False),
+            title="Current Configuration",
+        )
+    )
 
 
 # ============== SERVE COMMAND ==============
@@ -475,9 +481,7 @@ def serve(
     try:
         import uvicorn
     except ImportError:
-        console.print(
-            "[red]uvicorn is not installed. Install it with: pip install uvicorn[/red]"
-        )
+        console.print("[red]uvicorn is not installed. Install it with: pip install uvicorn[/red]")
         raise typer.Exit(1)
 
     console.print(
@@ -496,6 +500,7 @@ def serve(
 
 
 # ============== HELPER FUNCTIONS ==============
+
 
 def _print_analysis_summary(analysis_result) -> None:
     """Print analysis summary to console."""

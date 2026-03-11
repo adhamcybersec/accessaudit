@@ -97,9 +97,7 @@ class TestAWSIntegration:
         # Report
         reporter = Reporter()
         report_path = tmp_path / "report.json"
-        report = await reporter.generate_json_report(
-            scan_result, analysis_result, report_path
-        )
+        report = await reporter.generate_json_report(scan_result, analysis_result, report_path)
 
         assert report_path.exists()
         assert "scan" in report

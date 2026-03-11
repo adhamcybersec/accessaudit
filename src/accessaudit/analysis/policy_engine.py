@@ -133,10 +133,14 @@ class PolicyEngine:
 
         try:
             proc = await asyncio.create_subprocess_exec(
-                "opa", "eval",
-                "--data", rule_file,
-                "--input", "/dev/stdin",
-                "--format", "json",
+                "opa",
+                "eval",
+                "--data",
+                rule_file,
+                "--input",
+                "/dev/stdin",
+                "--format",
+                "json",
                 "data.accessaudit.rules.deny",
                 stdin=asyncio.subprocess.PIPE,
                 stdout=asyncio.subprocess.PIPE,

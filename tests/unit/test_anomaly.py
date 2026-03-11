@@ -72,10 +72,7 @@ class TestAnomalyDetector:
         detector = AnomalyDetector(min_group_size=10)
         # Create 5 accounts in a group (below threshold of 10)
         accounts = [_make_account(f"user-{i}", groups=["small-team"]) for i in range(5)]
-        permissions = {
-            a.id: [_make_permission(a.id, "s3", PermissionScope.READ)]
-            for a in accounts
-        }
+        permissions = {a.id: [_make_permission(a.id, "s3", PermissionScope.READ)] for a in accounts}
 
         findings = detector.detect(accounts, permissions)
         assert findings == []

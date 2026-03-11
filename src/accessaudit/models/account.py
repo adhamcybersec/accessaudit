@@ -25,9 +25,7 @@ class Account(BaseModel):
     email: Optional[str] = Field(None, description="Account email address")
     created_at: Optional[datetime] = Field(None, description="Account creation timestamp")
     last_login: Optional[datetime] = Field(None, description="Last successful login timestamp")
-    last_activity: Optional[datetime] = Field(
-        None, description="Last activity/access timestamp"
-    )
+    last_activity: Optional[datetime] = Field(None, description="Last activity/access timestamp")
     status: AccountStatus = Field(default=AccountStatus.ACTIVE, description="Account status")
     mfa_enabled: bool = Field(default=False, description="Whether MFA/2FA is enabled")
     has_admin_role: bool = Field(default=False, description="Whether account has admin privileges")

@@ -12,7 +12,8 @@ from accessaudit.models import Account, Permission, Policy, FindingCategory
 @pytest.fixture
 def base_rego(tmp_path):
     rego = tmp_path / "base.rego"
-    rego.write_text("""
+    rego.write_text(
+        """
 package accessaudit.rules
 
 deny[msg] {
@@ -20,7 +21,8 @@ deny[msg] {
     not input.account.mfa_enabled
     msg := sprintf("Admin %s has no MFA", [input.account.username])
 }
-""")
+"""
+    )
     return str(rego)
 
 
@@ -37,16 +39,19 @@ class TestPolicyEngine:
     async def test_evaluate_returns_violations(self, engine):
         """Should detect admin without MFA via Rego rule."""
         account = Account(
-            id="u1", provider="aws", username="admin-user",
-            mfa_enabled=False, has_admin_role=True,
+            id="u1",
+            provider="aws",
+            username="admin-user",
+            mfa_enabled=False,
+            has_admin_role=True,
         )
 
-        opa_result = {
-            "result": [{"expressions": [{"value": ["Admin admin-user has no MFA"]}]}]
-        }
+        opa_result = {"result": [{"expressions": [{"value": ["Admin admin-user has no MFA"]}]}]}
 
-        with patch.object(engine, "_opa_available", return_value=True), \
-             patch.object(engine, "_run_opa", return_value=opa_result):
+        with (
+            patch.object(engine, "_opa_available", return_value=True),
+            patch.object(engine, "_run_opa", return_value=opa_result),
+        ):
             findings = await engine.evaluate_account(account, [])
 
         assert len(findings) >= 1
@@ -56,14 +61,19 @@ class TestPolicyEngine:
     async def test_no_violations_returns_empty(self, engine):
         """Account with MFA should pass."""
         account = Account(
-            id="u2", provider="aws", username="good-user",
-            mfa_enabled=True, has_admin_role=True,
+            id="u2",
+            provider="aws",
+            username="good-user",
+            mfa_enabled=True,
+            has_admin_role=True,
         )
 
         opa_result = {"result": [{"expressions": [{"value": []}]}]}
 
-        with patch.object(engine, "_opa_available", return_value=True), \
-             patch.object(engine, "_run_opa", return_value=opa_result):
+        with (
+            patch.object(engine, "_opa_available", return_value=True),
+            patch.object(engine, "_run_opa", return_value=opa_result),
+        ):
             findings = await engine.evaluate_account(account, [])
 
         assert len(findings) == 0
@@ -73,8 +83,11 @@ class TestPolicyEngine:
         """Should gracefully handle missing OPA binary."""
         with patch.object(engine, "_opa_available", return_value=False):
             account = Account(
-                id="u1", provider="aws", username="user",
-                mfa_enabled=False, has_admin_role=True,
+                id="u1",
+                provider="aws",
+                username="user",
+                mfa_enabled=False,
+                has_admin_role=True,
             )
             findings = await engine.evaluate_account(account, [])
             assert isinstance(findings, list)

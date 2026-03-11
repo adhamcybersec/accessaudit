@@ -46,9 +46,7 @@ class Finding(BaseModel):
     )
     resource_arn: str | None = Field(None, description="Related resource ARN/ID")
     policy_arn: str | None = Field(None, description="Related policy ARN/ID")
-    metadata: dict[str, Any] = Field(
-        default_factory=dict, description="Additional context"
-    )
+    metadata: dict[str, Any] = Field(default_factory=dict, description="Additional context")
 
     class Config:
         """Pydantic configuration."""

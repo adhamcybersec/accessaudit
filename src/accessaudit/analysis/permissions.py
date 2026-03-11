@@ -36,9 +36,7 @@ class PermissionAnalyzer:
             account_permissions = all_permissions.get(account.id, [])
 
             # Check for wildcard permissions
-            wildcard_findings = await self._check_wildcard_permissions(
-                account, account_permissions
-            )
+            wildcard_findings = await self._check_wildcard_permissions(account, account_permissions)
             findings.extend(wildcard_findings)
 
             # Check for excessive permissions

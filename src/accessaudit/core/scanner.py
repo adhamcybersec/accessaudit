@@ -88,7 +88,9 @@ class Scanner:
 
         return connectors[provider](provider_config)
 
-    async def scan(self, provider: str, provider_config: dict[str, Any] | None = None) -> ScanResult:
+    async def scan(
+        self, provider: str, provider_config: dict[str, Any] | None = None
+    ) -> ScanResult:
         """Run a scan against a provider.
 
         Args:
