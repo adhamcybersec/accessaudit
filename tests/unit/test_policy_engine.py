@@ -12,8 +12,7 @@ from accessaudit.models import Account, Permission, Policy, FindingCategory
 @pytest.fixture
 def base_rego(tmp_path):
     rego = tmp_path / "base.rego"
-    rego.write_text(
-        """
+    rego.write_text("""
 package accessaudit.rules
 
 deny[msg] {
@@ -21,8 +20,7 @@ deny[msg] {
     not input.account.mfa_enabled
     msg := sprintf("Admin %s has no MFA", [input.account.username])
 }
-"""
-    )
+""")
     return str(rego)
 
 

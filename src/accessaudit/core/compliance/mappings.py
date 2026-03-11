@@ -4,7 +4,6 @@ from accessaudit.core.compliance.soc2 import SOC2_CONTROLS
 from accessaudit.core.compliance.iso27001 import ISO27001_CONTROLS
 from accessaudit.models.finding import Finding
 
-
 FRAMEWORK_CONTROLS = {
     "soc2": SOC2_CONTROLS,
     "iso27001": ISO27001_CONTROLS,

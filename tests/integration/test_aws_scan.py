@@ -18,7 +18,6 @@ from accessaudit.core.analyzer import Analyzer
 from accessaudit.core.reporter import Reporter
 from accessaudit.core.scanner import Scanner
 
-
 # Skip tests if no AWS credentials
 HAS_AWS_CREDENTIALS = bool(
     os.environ.get("AWS_ACCESS_KEY_ID") and os.environ.get("AWS_SECRET_ACCESS_KEY")
