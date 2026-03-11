@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AccessAudit{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [data-severity="critical"] { --badge-color: #ef4444; }
+        [data-severity="high"] { --badge-color: #f97316; }
+        [data-severity="medium"] { --badge-color: #eab308; }
+        [data-severity="low"] { --badge-color: #3b82f6; }
+        [data-severity="info"] { --badge-color: #6b7280; }
+    </style>
+</head>
+<body class="h-full bg-gray-50 text-gray-900">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-8">
+                    <a href="/" class="flex items-center space-x-2">
+                        <span class="text-xl font-bold text-blue-600">AccessAudit</span>
+                    </a>
+                    <div class="hidden sm:flex space-x-4">
+                        <a href="/" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Dashboard</a>
+                        <a href="/scans" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Scans</a>
+                        <a href="/findings" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Findings</a>
+                        <a href="/reports" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Reports</a>
+                        <a href="/rules-dashboard" class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50">Rules</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <span class="text-xs text-gray-400">IAM Access Review Automation</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 mt-12">
+        <div class="max-w-7xl mx-auto px-4 py-4 text-center text-xs text-gray-400">
+            AccessAudit v0.1.0
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}AccessAudit - Scans{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">Scans</h1>
+        <button
+            hx-post="/api/v1/scans"
+            hx-vals='{"provider": "aws", "config": {}}'
+            hx-headers='{"Content-Type": "application/json"}'
+            hx-swap="none"
+            hx-on::after-request="window.location.reload()"
+            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+            Trigger New Scan
+        </button>
+    </div>
+
+    <!-- Scans Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Scan ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Provider</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Started</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Completed</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Users Found</th>
+                </tr>
+            </thead>
+            <tbody id="scans-table" class="bg-white divide-y divide-gray-200"
+                   {% if has_running %}hx-get="/scans" hx-trigger="every 5s" hx-select="#scans-table" hx-swap="outerHTML"{% endif %}>
+                {% for scan in scans %}
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-blue-600">{{ scan.scan_id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ scan.provider }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if scan.status == 'completed' %}
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">completed</span>
+                        {% elif scan.status == 'running' %}
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 animate-pulse">running</span>
+                        {% elif scan.status == 'pending' %}
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">pending</span>
+                        {% elif scan.status == 'failed' %}
+                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">failed</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ scan.started_at or '-' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ scan.completed_at or '-' }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ scan.users | length if scan.users else 0 }}</td>
+                </tr>
+                {% endfor %}
+                {% if not scans %}
+                <tr>
+                    <td colspan="6" class="px-6 py-8 text-center text-sm text-gray-500">No scans found. Click "Trigger New Scan" to start.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
