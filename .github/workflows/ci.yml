@@ -126,11 +126,17 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     services:
       localstack:
-        image: localstack/localstack:latest
+        image: localstack/localstack:3
         ports:
           - 4566:4566
         env:
           SERVICES: iam,sts
+        options: >-
+          --health-cmd "curl -f http://localhost:4566/_localstack/health || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 30
+          --health-start-period 15s
     steps:
       - uses: actions/checkout@v4
 
@@ -144,9 +150,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
-      - name: Wait for LocalStack
+      - name: Verify LocalStack is ready
         run: |
-          timeout 180 sh -c 'until curl -s http://localhost:4566/_localstack/health | grep -q "running"; do sleep 2; done'
+          curl -s http://localhost:4566/_localstack/health | python -m json.tool
           echo "LocalStack is ready"
 
       - name: Run integration tests
