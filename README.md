@@ -31,7 +31,7 @@ AccessAudit automates IAM security audits across AWS, Azure, GCP, and SailPoint.
 pip install accessaudit
 
 # From source
-git clone https://github.com/adhampx/accessaudit.git
+git clone https://github.com/adhamcybersec/accessaudit.git
 cd accessaudit
 pip install -e .
 ```
@@ -123,7 +123,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design.
 
 ```bash
 # Clone repo
-git clone https://github.com/adhampx/accessaudit.git
+git clone https://github.com/adhamcybersec/accessaudit.git
 cd accessaudit
 
 # Create virtual environment
@@ -179,5 +179,5 @@ Built with inspiration from:
 ---
 
 **Project Status:** 🚧 MVP in development  
-**Maintainer:** Adham Rashed ([@adhampx](https://github.com/adhampx))  
+**Maintainer:** Adham Rashed ([@adhamcybersec](https://github.com/adhampx))  
 **Start Date:** March 2026
