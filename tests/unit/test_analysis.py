@@ -4,9 +4,11 @@ from datetime import datetime, timezone, timedelta
 
 import pytest
 
+from accessaudit.analysis.anomaly import AnomalyDetector
 from accessaudit.analysis.dormant import DormantAccountAnalyzer
 from accessaudit.analysis.permissions import PermissionAnalyzer
 from accessaudit.analysis.rules import Rule, RuleEngine
+from accessaudit.core.analyzer import Analyzer
 from accessaudit.models import Account, AccountStatus, FindingCategory, FindingSeverity, Permission
 
 
@@ -278,3 +280,13 @@ class TestRule:
 
         result = rule.evaluate({"account": regular_account})
         assert result is False
+
+
+class TestAnalyzerAnomalyIntegration:
+    """Tests for AnomalyDetector integration in Analyzer."""
+
+    def test_analyzer_has_anomaly_detector(self):
+        """Analyzer should have an anomaly_detector attribute."""
+        analyzer = Analyzer()
+        assert hasattr(analyzer, "anomaly_detector")
+        assert isinstance(analyzer.anomaly_detector, AnomalyDetector)

@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
+from accessaudit.analysis.anomaly import AnomalyDetector
 from accessaudit.analysis.dormant import DormantAccountAnalyzer
 from accessaudit.analysis.permissions import PermissionAnalyzer
 from accessaudit.analysis.rules import RuleEngine
@@ -52,6 +53,13 @@ class Analyzer:
         self.dormant_analyzer = DormantAccountAnalyzer({
             "dormant_threshold_days": analysis_config.get("dormant_threshold_days", 90),
         })
+
+        # Initialize anomaly detector
+        anomaly_config = analysis_config.get("anomaly", {})
+        self.anomaly_detector = AnomalyDetector(
+            min_group_size=anomaly_config.get("min_group_size", 10),
+            contamination=anomaly_config.get("contamination", 0.1),
+        )
 
         # Initialize rule engine with custom rules
         rules = analysis_config.get("rules", [])
@@ -117,6 +125,13 @@ class Analyzer:
             scan_result.accounts, scan_result.permissions, scan_result.policies
         )
         result.findings.extend(rule_findings)
+
+        # Run ML anomaly detection
+        print(f"[{scan_result.scan_id}] Running anomaly detection...")
+        anomaly_findings = self.anomaly_detector.detect(
+            scan_result.accounts, scan_result.permissions
+        )
+        result.findings.extend(anomaly_findings)
 
         # Generate summary
         result.summary = self._generate_summary(scan_result, result.findings)
