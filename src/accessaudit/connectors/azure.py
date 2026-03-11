@@ -135,14 +135,58 @@ class AzureConnector(BaseConnector):
             await self.connect()
 
         try:
-            user = await self._graph_get(f"/users/{account_id}")
+            user = await self._graph_get(
+                f"/users/{account_id}?$select=id,displayName,userPrincipalName,"
+                "accountEnabled,createdDateTime,signInActivity"
+                "&$expand=memberOf"
+            )
             if not user:
                 return None
-            accounts = await self.list_accounts()
-            for a in accounts:
-                if a.id == account_id:
-                    return a
-            return None
+
+            # Build Account directly from single user response
+            sign_in = user.get("signInActivity") or {}
+            last_sign_in_str = sign_in.get("lastSignInDateTime")
+            last_login = None
+            if last_sign_in_str:
+                try:
+                    last_login = datetime.fromisoformat(last_sign_in_str.replace("Z", "+00:00"))
+                except (ValueError, TypeError):
+                    pass
+
+            created_str = user.get("createdDateTime")
+            created_at = None
+            if created_str:
+                try:
+                    created_at = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
+                except (ValueError, TypeError):
+                    pass
+
+            upn = user.get("userPrincipalName", "")
+            groups = [m.get("displayName", "") for m in user.get("memberOf", []) if m.get("displayName")]
+            status = AccountStatus.ACTIVE if user.get("accountEnabled") else AccountStatus.DISABLED
+
+            # Check admin role membership
+            admin_members = await self._fetch_directory_role_members()
+            is_admin = account_id in admin_members.get("Global Administrator", set())
+
+            # Check MFA
+            mfa_status = await self._fetch_user_mfa_status()
+            mfa_enabled = mfa_status.get(account_id, False)
+
+            return Account(
+                id=account_id,
+                provider="azure",
+                username=upn,
+                email=upn if "@" in upn else None,
+                created_at=created_at,
+                last_login=last_login,
+                last_activity=last_login,
+                status=status,
+                mfa_enabled=mfa_enabled,
+                has_admin_role=is_admin,
+                groups=groups,
+                metadata={"display_name": user.get("displayName", "")},
+            )
         except Exception:
             return None
 
@@ -267,7 +311,7 @@ class AzureConnector(BaseConnector):
         """Fetch all Azure AD users via Graph API."""
         result = await self._graph_get(
             "/users?$select=id,displayName,userPrincipalName,accountEnabled,"
-            "createdDateTime,signInActivity&$top=999"
+            "createdDateTime,signInActivity&$expand=memberOf&$top=999"
         )
         if not result:
             return []

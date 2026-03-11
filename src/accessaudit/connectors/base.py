@@ -83,14 +83,14 @@ class BaseConnector(ABC):
         """
         pass
 
-    async def list_roles(self) -> list[dict[str, Any]]:
+    async def list_roles(self) -> list[Policy]:
         """List all roles from provider.
 
         Returns an empty list by default. Subclasses may override to
         return provider-specific role information.
 
         Returns:
-            List of role dictionaries
+            List of Policy objects representing roles
         """
         return []
 

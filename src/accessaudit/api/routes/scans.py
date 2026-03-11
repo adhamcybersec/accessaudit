@@ -3,7 +3,7 @@
 import asyncio
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
@@ -16,14 +16,14 @@ router = APIRouter(prefix="/api/v1", tags=["scans"])
 class ScanRequest(BaseModel):
     """Request body for triggering a scan."""
 
-    provider: str
+    provider: Literal["aws", "azure", "gcp"]
     config: dict[str, Any] = {}
 
 
 @router.post("/scans", status_code=202)
 async def trigger_scan(request: Request, body: ScanRequest) -> dict:
     """Trigger a new scan in the background. Returns scan ID immediately."""
-    scan_id = str(uuid.uuid4())[:8]
+    scan_id = str(uuid.uuid4())
 
     # Create a placeholder scan result in pending state
     placeholder = ScanResult(
@@ -47,7 +47,12 @@ async def trigger_scan(request: Request, body: ScanRequest) -> dict:
             placeholder.errors.append(str(e))
             placeholder.completed_at = datetime.now()
 
-    asyncio.create_task(run_scan())
+    # Store task reference to prevent garbage collection
+    task = asyncio.create_task(run_scan())
+    if not hasattr(request.app.state, "background_tasks"):
+        request.app.state.background_tasks = set()
+    request.app.state.background_tasks.add(task)
+    task.add_done_callback(request.app.state.background_tasks.discard)
 
     return {"scan_id": scan_id, "status": "pending"}
 
