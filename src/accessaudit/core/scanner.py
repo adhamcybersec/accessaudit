@@ -9,6 +9,16 @@ from accessaudit.connectors.base import BaseConnector
 from accessaudit.connectors.aws import AWSConnector
 from accessaudit.models import Account, Permission, Policy
 
+try:
+    from accessaudit.connectors.azure import AzureConnector
+except ImportError:
+    AzureConnector = None
+
+try:
+    from accessaudit.connectors.gcp import GCPConnector
+except ImportError:
+    GCPConnector = None
+
 
 @dataclass
 class ScanResult:
@@ -64,11 +74,14 @@ class Scanner:
         Raises:
             ValueError: If provider is not supported
         """
-        connectors = {
+        connectors: dict[str, type[BaseConnector]] = {
             "aws": AWSConnector,
-            # "azure": AzureConnector,  # Future
-            # "gcp": GCPConnector,      # Future
         }
+
+        if AzureConnector is not None:
+            connectors["azure"] = AzureConnector
+        if GCPConnector is not None:
+            connectors["gcp"] = GCPConnector
 
         if provider not in connectors:
             raise ValueError(f"Unsupported provider: {provider}")
