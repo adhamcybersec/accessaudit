@@ -1,0 +1,46 @@
+# AccessAudit Configuration
+# Copy to config.yaml and customize
+
+providers:
+  aws:
+    enabled: true
+    regions:
+      - us-east-1
+      - eu-west-1
+    # Credentials (optional - uses environment variables or IAM roles if not specified)
+    # access_key_id: ${AWS_ACCESS_KEY_ID}
+    # secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+
+  azure:
+    enabled: false
+    # tenant_id: ${AZURE_TENANT_ID}
+    # client_id: ${AZURE_CLIENT_ID}
+    # client_secret: ${AZURE_CLIENT_SECRET}
+
+  gcp:
+    enabled: false
+    # project_id: ${GOOGLE_CLOUD_PROJECT}
+    # credentials_file: ${GOOGLE_APPLICATION_CREDENTIALS}
+
+analysis:
+  dormant_threshold_days: 90
+  max_permissions_threshold: 50
+
+  rules:
+    - name: "No wildcard admin policies"
+      severity: critical
+      condition: "policy.is_overly_permissive"
+      description: "Policies should not grant wildcard permissions on all resources"
+      remediation: "Replace with least-privilege policy based on actual usage"
+
+    - name: "MFA required for privileged accounts"
+      severity: high
+      condition: "account.has_admin_role AND NOT account.mfa_enabled"
+      description: "Administrative accounts must have MFA enabled"
+      remediation: "Enable MFA for this account immediately"
+
+reporting:
+  formats:
+    - json
+  include_remediation: true
+  output_dir: ./reports
