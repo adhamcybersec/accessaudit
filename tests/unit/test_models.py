@@ -264,6 +264,14 @@ class TestPolicy:
         assert policy.is_overly_permissive() is False
 
 
+class TestFindingCategory:
+    """Tests for FindingCategory enum."""
+
+    def test_anomaly_category_exists(self):
+        """Test that ANOMALY category exists with correct value."""
+        assert FindingCategory.ANOMALY == "anomaly"
+
+
 class TestFinding:
     """Tests for Finding model."""
 

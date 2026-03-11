@@ -27,6 +27,7 @@ class FindingCategory(str, Enum):
     WEAK_PASSWORD = "weak_password"
     UNUSED_CREDENTIALS = "unused_credentials"
     OVERPRIVILEGED_ROLE = "overprivileged_role"
+    ANOMALY = "anomaly"
     OTHER = "other"
 
 
