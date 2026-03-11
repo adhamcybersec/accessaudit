@@ -6,7 +6,19 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from accessaudit.connectors.aws import AWSConnector
+from accessaudit.connectors.base import BaseConnector
 from accessaudit.models import AccountStatus
+
+
+class TestBaseConnector:
+    """Tests for BaseConnector ABC."""
+
+    @pytest.mark.asyncio
+    async def test_list_roles_returns_empty_list_by_default(self):
+        """Test that list_roles() returns empty list by default."""
+        connector = AWSConnector({"region": "us-east-1"})
+        roles = await connector.list_roles()
+        assert roles == []
 
 
 class TestAWSConnector:
