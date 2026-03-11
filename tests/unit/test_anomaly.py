@@ -1,12 +1,10 @@
 """Unit tests for ML anomaly detection."""
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
-import pytest
-
+from accessaudit.analysis.anomaly import AnomalyDetector
 from accessaudit.models import Account, AccountStatus, Permission, PermissionScope
 from accessaudit.models.finding import FindingCategory
-from accessaudit.analysis.anomaly import AnomalyDetector
 
 
 def _make_account(
@@ -21,9 +19,9 @@ def _make_account(
         provider="aws",
         username=account_id,
         email=f"{account_id}@example.com",
-        created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
-        last_login=datetime.now(timezone.utc) - timedelta(days=5),
-        last_activity=datetime.now(timezone.utc) - timedelta(days=1),
+        created_at=datetime(2024, 1, 1, tzinfo=UTC),
+        last_login=datetime.now(UTC) - timedelta(days=5),
+        last_activity=datetime.now(UTC) - timedelta(days=1),
         status=AccountStatus.ACTIVE,
         mfa_enabled=mfa_enabled,
         has_admin_role=has_admin_role,

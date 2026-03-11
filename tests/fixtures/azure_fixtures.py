@@ -52,7 +52,9 @@ def make_azure_rbac_assignment(
         "id": assignment_id,
         "properties": {
             "principalId": principal_id,
-            "roleDefinitionId": f"/providers/Microsoft.Authorization/roleDefinitions/{assignment_id}",
+            "roleDefinitionId": (
+                "/providers/Microsoft.Authorization" f"/roleDefinitions/{assignment_id}"
+            ),
             "scope": scope,
         },
         "role_definition_name": role_definition_name,

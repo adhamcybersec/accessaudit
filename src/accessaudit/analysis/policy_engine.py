@@ -177,7 +177,10 @@ class PolicyEngine:
                 f"Account {account.username} violates policy defined in "
                 f"'{rule_name}.rego': {violation_msg}"
             ),
-            remediation="Review and remediate the policy violation according to organizational guidelines.",
+            remediation=(
+                "Review and remediate the policy violation"
+                " according to organizational guidelines."
+            ),
             metadata={
                 "rule_file": rule_file,
                 "rule_name": rule_name,

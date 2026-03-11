@@ -190,5 +190,5 @@ class Analyzer:
                 }
                 for f in top_findings
             ],
-            "accounts_with_findings": len(set(f.account_id for f in findings)),
+            "accounts_with_findings": len({f.account_id for f in findings}),
         }

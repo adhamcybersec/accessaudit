@@ -1,12 +1,11 @@
 """Unit tests for connectors (mocked)."""
 
-from datetime import datetime, timezone, timedelta
-from unittest.mock import AsyncMock, MagicMock, patch
+from datetime import UTC, datetime
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from accessaudit.connectors.aws import AWSConnector
-from accessaudit.connectors.base import BaseConnector
 from accessaudit.models import AccountStatus
 
 
@@ -38,14 +37,14 @@ class TestAWSConnector:
                         "UserId": "AIDAEXAMPLE12345",
                         "Arn": "arn:aws:iam::123456789012:user/test-user",
                         "Path": "/",
-                        "CreateDate": datetime(2023, 1, 15, 10, 30, 0, tzinfo=timezone.utc),
+                        "CreateDate": datetime(2023, 1, 15, 10, 30, 0, tzinfo=UTC),
                     },
                     {
                         "UserName": "admin-user",
                         "UserId": "AIDAEXAMPLE67890",
                         "Arn": "arn:aws:iam::123456789012:user/admin-user",
                         "Path": "/",
-                        "CreateDate": datetime(2022, 6, 1, 8, 0, 0, tzinfo=timezone.utc),
+                        "CreateDate": datetime(2022, 6, 1, 8, 0, 0, tzinfo=UTC),
                     },
                 ]
             }
@@ -169,7 +168,7 @@ class TestAWSConnector:
             "UserId": "AIDAEXAMPLE12345",
             "Arn": "arn:aws:iam::123456789012:user/test-user",
             "Path": "/",
-            "CreateDate": datetime(2023, 1, 15, 10, 30, 0, tzinfo=timezone.utc),
+            "CreateDate": datetime(2023, 1, 15, 10, 30, 0, tzinfo=UTC),
         }
 
         connector.iam_client = mock_boto3_client

@@ -76,9 +76,19 @@ class PermissionAnalyzer:
                     severity=FindingSeverity.CRITICAL,
                     category=FindingCategory.EXCESSIVE_PERMISSIONS,
                     account_id=account.id,
-                    title=f"User has full wildcard permissions",
-                    description=f"Account {account.username} has unrestricted wildcard permissions (*:*) from policy {permission.source_policy}. This grants full administrative access to all AWS services and resources.",
-                    remediation="Replace wildcard policy with least-privilege policies granting only required permissions for the user's role.",
+                    title="User has full wildcard permissions",
+                    description=(
+                        f"Account {account.username} has unrestricted"
+                        f" wildcard permissions (*:*) from policy"
+                        f" {permission.source_policy}. This grants full"
+                        " administrative access to all AWS services"
+                        " and resources."
+                    ),
+                    remediation=(
+                        "Replace wildcard policy with least-privilege"
+                        " policies granting only required permissions"
+                        " for the user's role."
+                    ),
                     resource_arn=permission.resource_arn,
                     policy_arn=permission.source_policy,
                     metadata={
@@ -100,9 +110,16 @@ class PermissionAnalyzer:
                     severity=FindingSeverity.HIGH,
                     category=FindingCategory.EXCESSIVE_PERMISSIONS,
                     account_id=account.id,
-                    title=f"User has service-level wildcard permissions",
-                    description=f"Account {account.username} has wildcard permissions for {permission.resource_type} from policy {permission.source_policy}.",
-                    remediation="Restrict permissions to only the specific actions required for this user's role.",
+                    title="User has service-level wildcard permissions",
+                    description=(
+                        f"Account {account.username} has wildcard"
+                        f" permissions for {permission.resource_type}"
+                        f" from policy {permission.source_policy}."
+                    ),
+                    remediation=(
+                        "Restrict permissions to only the specific"
+                        " actions required for this user's role."
+                    ),
                     resource_arn=permission.resource_arn,
                     policy_arn=permission.source_policy,
                     metadata={
@@ -138,8 +155,17 @@ class PermissionAnalyzer:
                 category=FindingCategory.EXCESSIVE_PERMISSIONS,
                 account_id=account.id,
                 title=f"Account has excessive permissions ({len(permissions)})",
-                description=f"Account {account.username} has {len(permissions)} permissions, exceeding the threshold of {self.max_permissions_threshold}. This may indicate over-provisioning.",
-                remediation="Review account's actual usage and remove unused permissions. Consider consolidating overlapping permissions.",
+                description=(
+                    f"Account {account.username} has"
+                    f" {len(permissions)} permissions, exceeding the"
+                    f" threshold of {self.max_permissions_threshold}."
+                    " This may indicate over-provisioning."
+                ),
+                remediation=(
+                    "Review account's actual usage and remove unused"
+                    " permissions. Consider consolidating overlapping"
+                    " permissions."
+                ),
                 metadata={
                     "permission_count": len(permissions),
                     "threshold": self.max_permissions_threshold,
@@ -173,8 +199,15 @@ class PermissionAnalyzer:
                 category=FindingCategory.MISSING_MFA,
                 account_id=account.id,
                 title="Admin account without MFA",
-                description=f"Account {account.username} has administrative privileges but does not have MFA enabled. This creates a significant security risk.",
-                remediation="Enable MFA (Multi-Factor Authentication) for this privileged account immediately.",
+                description=(
+                    f"Account {account.username} has administrative"
+                    " privileges but does not have MFA enabled."
+                    " This creates a significant security risk."
+                ),
+                remediation=(
+                    "Enable MFA (Multi-Factor Authentication)"
+                    " for this privileged account immediately."
+                ),
                 metadata={"has_admin_role": True, "mfa_enabled": False},
             )
             findings.append(finding)

@@ -7,8 +7,8 @@ from accessaudit.connectors.base import BaseConnector
 from accessaudit.models import Account, AccountStatus, Permission, Policy
 
 try:
-    from google.oauth2 import service_account
     from google.cloud import resourcemanager_v3
+    from google.oauth2 import service_account
 
     HAS_GCP = True
 except ImportError:

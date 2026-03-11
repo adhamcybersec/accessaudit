@@ -10,14 +10,14 @@ testing the API layer, not the cloud connectors.
 """
 
 import asyncio
-from datetime import datetime, timezone
-from unittest.mock import AsyncMock, patch
+from datetime import UTC, datetime
+from unittest.mock import patch
 
 import httpx
 import pytest
 
 from accessaudit.api.app import create_app
-from accessaudit.core.scanner import ScanResult, Scanner
+from accessaudit.core.scanner import Scanner, ScanResult
 from accessaudit.models import (
     Account,
     AccountStatus,
@@ -42,8 +42,8 @@ def _build_scan_result(scan_id: str) -> ScanResult:
             mfa_enabled=False,
             has_admin_role=True,
             groups=["admins"],
-            created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
-            last_activity=datetime(2024, 3, 1, tzinfo=timezone.utc),
+            created_at=datetime(2024, 1, 1, tzinfo=UTC),
+            last_activity=datetime(2024, 3, 1, tzinfo=UTC),
         ),
         Account(
             id="arn:aws:iam::123456789012:user/test-dev",
@@ -53,8 +53,8 @@ def _build_scan_result(scan_id: str) -> ScanResult:
             mfa_enabled=True,
             has_admin_role=False,
             groups=["developers"],
-            created_at=datetime(2024, 2, 1, tzinfo=timezone.utc),
-            last_activity=datetime(2024, 3, 10, tzinfo=timezone.utc),
+            created_at=datetime(2024, 2, 1, tzinfo=UTC),
+            last_activity=datetime(2024, 3, 10, tzinfo=UTC),
         ),
     ]
 

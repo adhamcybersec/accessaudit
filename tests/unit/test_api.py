@@ -1,8 +1,8 @@
 """Tests for the FastAPI REST API."""
 
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
 from datetime import datetime
+from unittest.mock import AsyncMock, patch
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -51,8 +51,8 @@ async def test_trigger_scan(client, app):
         status="completed",
     )
 
-    with patch("accessaudit.api.routes.scans.Scanner") as MockScanner:
-        instance = MockScanner.return_value
+    with patch("accessaudit.api.routes.scans.Scanner") as mock_scanner:
+        instance = mock_scanner.return_value
         instance.scan = AsyncMock(return_value=mock_result)
 
         response = await client.post(

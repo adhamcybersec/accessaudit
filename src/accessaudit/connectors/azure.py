@@ -1,7 +1,7 @@
 """Azure AD + ARM RBAC connector."""
 
 import hashlib
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import Any
 
 from accessaudit.connectors.base import BaseConnector

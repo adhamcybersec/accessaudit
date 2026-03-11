@@ -1,12 +1,12 @@
 """Tests for OPA policy engine."""
 
-import json
-import pytest
-from unittest.mock import patch, AsyncMock
 from pathlib import Path
+from unittest.mock import patch
+
+import pytest
 
 from accessaudit.analysis.policy_engine import PolicyEngine
-from accessaudit.models import Account, Permission, Policy, FindingCategory
+from accessaudit.models import Account, FindingCategory
 
 
 @pytest.fixture

@@ -1,8 +1,6 @@
 """Unit tests for data models."""
 
-from datetime import datetime, timezone, timedelta
-
-import pytest
+from datetime import UTC, datetime, timedelta
 
 from accessaudit.models import (
     Account,
@@ -35,7 +33,7 @@ class TestAccount:
 
     def test_account_with_all_fields(self):
         """Test account with all fields populated."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         account = Account(
             id="arn:aws:iam::123456789012:user/admin",
             provider="aws",
@@ -62,7 +60,7 @@ class TestAccount:
             id="user-1",
             provider="aws",
             username="dormant-user",
-            last_activity=datetime.now(timezone.utc) - timedelta(days=100),
+            last_activity=datetime.now(UTC) - timedelta(days=100),
         )
         assert account.is_dormant(threshold_days=90) is True
 
@@ -72,7 +70,7 @@ class TestAccount:
             id="user-1",
             provider="aws",
             username="active-user",
-            last_activity=datetime.now(timezone.utc) - timedelta(days=30),
+            last_activity=datetime.now(UTC) - timedelta(days=30),
         )
         assert account.is_dormant(threshold_days=90) is False
 
@@ -91,7 +89,7 @@ class TestAccount:
             id="user-1",
             provider="aws",
             username="test",
-            last_activity=datetime.now(timezone.utc) - timedelta(days=45),
+            last_activity=datetime.now(UTC) - timedelta(days=45),
         )
         days = account.days_since_activity()
         assert days is not None

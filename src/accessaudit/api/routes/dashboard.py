@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from fastapi import APIRouter, Request, Query
+from fastapi import APIRouter, Query, Request
 from fastapi.templating import Jinja2Templates
 
 router = APIRouter(tags=["dashboard"])

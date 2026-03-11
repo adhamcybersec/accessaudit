@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from accessaudit.api.routes import health, scans, findings, reports, rules, dashboard
+from accessaudit.api.routes import dashboard, findings, health, reports, rules, scans
 
 
 def create_app() -> FastAPI:

@@ -1,7 +1,8 @@
 """Tests for HTML and PDF report generation."""
 
-import pytest
 from datetime import datetime
+
+import pytest
 
 from accessaudit.core.analyzer import AnalysisResult
 from accessaudit.core.scanner import ScanResult

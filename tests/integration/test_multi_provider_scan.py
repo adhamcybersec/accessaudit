@@ -4,10 +4,8 @@ These tests mock at the connector level (not Scanner/Analyzer) to exercise the
 full pipeline with realistic data from multiple providers.
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, patch
-
-import pytest
 
 from accessaudit.connectors.aws import AWSConnector
 from accessaudit.connectors.azure import AzureConnector
@@ -38,8 +36,8 @@ def _aws_accounts() -> list[Account]:
             mfa_enabled=False,
             has_admin_role=True,
             groups=["admins"],
-            created_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
-            last_activity=datetime(2024, 3, 1, tzinfo=timezone.utc),
+            created_at=datetime(2024, 1, 1, tzinfo=UTC),
+            last_activity=datetime(2024, 3, 1, tzinfo=UTC),
         ),
         Account(
             id="arn:aws:iam::123456789012:user/dev-user",
@@ -49,8 +47,8 @@ def _aws_accounts() -> list[Account]:
             mfa_enabled=True,
             has_admin_role=False,
             groups=["developers"],
-            created_at=datetime(2024, 2, 1, tzinfo=timezone.utc),
-            last_activity=datetime(2024, 3, 10, tzinfo=timezone.utc),
+            created_at=datetime(2024, 2, 1, tzinfo=UTC),
+            last_activity=datetime(2024, 3, 10, tzinfo=UTC),
         ),
         Account(
             id="arn:aws:iam::123456789012:user/dormant-user",
@@ -60,8 +58,8 @@ def _aws_accounts() -> list[Account]:
             mfa_enabled=False,
             has_admin_role=False,
             groups=[],
-            created_at=datetime(2023, 1, 1, tzinfo=timezone.utc),
-            last_activity=datetime(2023, 6, 1, tzinfo=timezone.utc),
+            created_at=datetime(2023, 1, 1, tzinfo=UTC),
+            last_activity=datetime(2023, 6, 1, tzinfo=UTC),
         ),
     ]
 
@@ -158,8 +156,8 @@ def _azure_accounts() -> list[Account]:
             mfa_enabled=True,
             has_admin_role=True,
             groups=["Global Administrators"],
-            created_at=datetime(2024, 1, 15, tzinfo=timezone.utc),
-            last_activity=datetime(2024, 3, 9, tzinfo=timezone.utc),
+            created_at=datetime(2024, 1, 15, tzinfo=UTC),
+            last_activity=datetime(2024, 3, 9, tzinfo=UTC),
         ),
         Account(
             id="azure-user-002",
@@ -170,8 +168,8 @@ def _azure_accounts() -> list[Account]:
             mfa_enabled=False,
             has_admin_role=False,
             groups=["Developers"],
-            created_at=datetime(2024, 2, 20, tzinfo=timezone.utc),
-            last_activity=datetime(2024, 3, 11, tzinfo=timezone.utc),
+            created_at=datetime(2024, 2, 20, tzinfo=UTC),
+            last_activity=datetime(2024, 3, 11, tzinfo=UTC),
         ),
     ]
 
@@ -232,8 +230,8 @@ def _gcp_accounts() -> list[Account]:
             mfa_enabled=False,
             has_admin_role=True,
             groups=[],
-            created_at=datetime(2024, 1, 10, tzinfo=timezone.utc),
-            last_activity=datetime(2024, 3, 5, tzinfo=timezone.utc),
+            created_at=datetime(2024, 1, 10, tzinfo=UTC),
+            last_activity=datetime(2024, 3, 5, tzinfo=UTC),
         ),
     ]
 

@@ -2,10 +2,10 @@
 
 import pytest
 
-from accessaudit.core.scanner import Scanner
 from accessaudit.connectors.aws import AWSConnector
 from accessaudit.connectors.azure import AzureConnector
 from accessaudit.connectors.gcp import GCPConnector
+from accessaudit.core.scanner import Scanner
 
 
 class TestScannerCreateConnector:

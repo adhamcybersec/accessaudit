@@ -1,8 +1,7 @@
 """ML feature extraction for IAM anomaly detection."""
 
 from collections import Counter
-from datetime import datetime, timezone
-from typing import Any
+from datetime import UTC, datetime
 
 from accessaudit.models import Account, Permission, PermissionScope
 
@@ -113,10 +112,10 @@ class FeatureExtractor:
 
         # Account age in days
         if account.created_at:
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             created = account.created_at
             if created.tzinfo is None:
-                created = created.replace(tzinfo=timezone.utc)
+                created = created.replace(tzinfo=UTC)
             account_age = float((now - created).days)
         else:
             account_age = 0.0

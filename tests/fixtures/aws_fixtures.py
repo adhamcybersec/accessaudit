@@ -1,6 +1,6 @@
 """AWS IAM test fixtures."""
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
 # Mock AWS IAM users
 MOCK_USERS = [
@@ -9,28 +9,28 @@ MOCK_USERS = [
         "UserId": "AIDAEXAMPLE11111",
         "Arn": "arn:aws:iam::123456789012:user/admin-user",
         "Path": "/",
-        "CreateDate": datetime(2023, 1, 15, 10, 30, 0, tzinfo=timezone.utc),
+        "CreateDate": datetime(2023, 1, 15, 10, 30, 0, tzinfo=UTC),
     },
     {
         "UserName": "regular-user",
         "UserId": "AIDAEXAMPLE22222",
         "Arn": "arn:aws:iam::123456789012:user/regular-user",
         "Path": "/",
-        "CreateDate": datetime(2023, 6, 1, 14, 0, 0, tzinfo=timezone.utc),
+        "CreateDate": datetime(2023, 6, 1, 14, 0, 0, tzinfo=UTC),
     },
     {
         "UserName": "dormant-user",
         "UserId": "AIDAEXAMPLE33333",
         "Arn": "arn:aws:iam::123456789012:user/dormant-user",
         "Path": "/",
-        "CreateDate": datetime(2022, 1, 1, 9, 0, 0, tzinfo=timezone.utc),
+        "CreateDate": datetime(2022, 1, 1, 9, 0, 0, tzinfo=UTC),
     },
     {
         "UserName": "service-account",
         "UserId": "AIDAEXAMPLE44444",
         "Arn": "arn:aws:iam::123456789012:user/service-account",
         "Path": "/service-accounts/",
-        "CreateDate": datetime(2024, 1, 1, 8, 0, 0, tzinfo=timezone.utc),
+        "CreateDate": datetime(2024, 1, 1, 8, 0, 0, tzinfo=UTC),
     },
 ]
 
@@ -137,7 +137,7 @@ MOCK_MFA_DEVICES = {
         {
             "UserName": "regular-user",
             "SerialNumber": "arn:aws:iam::123456789012:mfa/regular-user",
-            "EnableDate": datetime(2023, 6, 15, 10, 0, 0, tzinfo=timezone.utc),
+            "EnableDate": datetime(2023, 6, 15, 10, 0, 0, tzinfo=UTC),
         }
     ],
     "dormant-user": [],
@@ -148,25 +148,25 @@ MOCK_MFA_DEVICES = {
 MOCK_ACCESS_KEY_LAST_USED = {
     "admin-user": {
         "AccessKeyId": "AKIAEXAMPLE11111",
-        "LastUsedDate": datetime.now(timezone.utc) - timedelta(days=1),
+        "LastUsedDate": datetime.now(UTC) - timedelta(days=1),
         "ServiceName": "iam",
         "Region": "us-east-1",
     },
     "regular-user": {
         "AccessKeyId": "AKIAEXAMPLE22222",
-        "LastUsedDate": datetime.now(timezone.utc) - timedelta(days=7),
+        "LastUsedDate": datetime.now(UTC) - timedelta(days=7),
         "ServiceName": "s3",
         "Region": "us-east-1",
     },
     "dormant-user": {
         "AccessKeyId": "AKIAEXAMPLE33333",
-        "LastUsedDate": datetime.now(timezone.utc) - timedelta(days=180),  # Dormant!
+        "LastUsedDate": datetime.now(UTC) - timedelta(days=180),  # Dormant!
         "ServiceName": "s3",
         "Region": "us-east-1",
     },
     "service-account": {
         "AccessKeyId": "AKIAEXAMPLE44444",
-        "LastUsedDate": datetime.now(timezone.utc) - timedelta(hours=2),
+        "LastUsedDate": datetime.now(UTC) - timedelta(hours=2),
         "ServiceName": "dynamodb",
         "Region": "us-east-1",
     },

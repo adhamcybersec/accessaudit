@@ -1,7 +1,7 @@
 """IAM provider connectors."""
 
-from accessaudit.connectors.base import BaseConnector
 from accessaudit.connectors.aws import AWSConnector
+from accessaudit.connectors.base import BaseConnector
 
 try:
     from accessaudit.connectors.azure import AzureConnector

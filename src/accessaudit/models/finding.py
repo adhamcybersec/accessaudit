@@ -58,8 +58,16 @@ class Finding(BaseModel):
                 "category": "excessive_permissions",
                 "account_id": "arn:aws:iam::123456789012:user/john.doe",
                 "title": "User has wildcard admin policy",
-                "description": "User john.doe has AdministratorAccess policy attached with full wildcard permissions (*:* on all resources)",
-                "remediation": "Remove AdministratorAccess policy and grant least-privilege permissions based on actual usage",
+                "description": (
+                    "User john.doe has AdministratorAccess policy"
+                    " attached with full wildcard permissions"
+                    " (*:* on all resources)"
+                ),
+                "remediation": (
+                    "Remove AdministratorAccess policy and grant"
+                    " least-privilege permissions based on"
+                    " actual usage"
+                ),
                 "detected_at": "2024-03-11T10:30:00Z",
                 "policy_arn": "arn:aws:iam::aws:policy/AdministratorAccess",
                 "metadata": {"policy_name": "AdministratorAccess", "is_aws_managed": True},

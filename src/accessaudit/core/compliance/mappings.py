@@ -1,7 +1,7 @@
 """Compliance framework mapper for mapping findings to control frameworks."""
 
-from accessaudit.core.compliance.soc2 import SOC2_CONTROLS
 from accessaudit.core.compliance.iso27001 import ISO27001_CONTROLS
+from accessaudit.core.compliance.soc2 import SOC2_CONTROLS
 from accessaudit.models.finding import Finding
 
 FRAMEWORK_CONTROLS = {

@@ -1,7 +1,6 @@
 """ML anomaly detection for IAM accounts using Isolation Forest."""
 
 import uuid
-from typing import Any
 
 import numpy as np
 from sklearn.ensemble import IsolationForest
@@ -92,9 +91,9 @@ class AnomalyDetector:
             return []
 
         # Normalise features
-        X = np.array(vectors, dtype=np.float64)
+        features_array = np.array(vectors, dtype=np.float64)
         scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(X)
+        features_scaled = scaler.fit_transform(features_array)
 
         # Run Isolation Forest
         model = IsolationForest(
@@ -102,12 +101,12 @@ class AnomalyDetector:
             random_state=42,
             n_estimators=100,
         )
-        predictions = model.fit_predict(X_scaled)
-        scores = model.decision_function(X_scaled)
+        predictions = model.fit_predict(features_scaled)
+        scores = model.decision_function(features_scaled)
 
         # Build findings for outliers (prediction == -1)
         findings: list[Finding] = []
-        for idx, (pred, score) in enumerate(zip(predictions, scores)):
+        for idx, (pred, score) in enumerate(zip(predictions, scores, strict=False)):
             if pred == -1:
                 account_id = account_ids[idx]
                 severity = self._score_to_severity(score)

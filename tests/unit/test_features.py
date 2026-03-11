@@ -1,11 +1,11 @@
 """Unit tests for ML feature extraction."""
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from accessaudit.models import Account, AccountStatus, Permission, PermissionScope
 from accessaudit.analysis.features import FeatureExtractor
+from accessaudit.models import Account, AccountStatus, Permission, PermissionScope
 
 
 def _make_account(
@@ -21,9 +21,9 @@ def _make_account(
         provider="aws",
         username=account_id,
         email=f"{account_id}@example.com",
-        created_at=created_at or datetime(2024, 1, 1, tzinfo=timezone.utc),
-        last_login=datetime.now(timezone.utc) - timedelta(days=5),
-        last_activity=datetime.now(timezone.utc) - timedelta(days=1),
+        created_at=created_at or datetime(2024, 1, 1, tzinfo=UTC),
+        last_login=datetime.now(UTC) - timedelta(days=5),
+        last_activity=datetime.now(UTC) - timedelta(days=1),
         status=AccountStatus.ACTIVE,
         mfa_enabled=mfa_enabled,
         has_admin_role=has_admin_role,
@@ -133,7 +133,7 @@ class TestFeatureExtractor:
         vectors, account_ids = extractor.extract(sample_accounts, sample_permissions)
 
         # Build a map for easy lookup
-        feature_map = dict(zip(account_ids, vectors))
+        feature_map = dict(zip(account_ids, vectors, strict=False))
 
         # user-2 has admin role -> admin feature should be 1
         # user-1 has MFA -> mfa feature should be 1

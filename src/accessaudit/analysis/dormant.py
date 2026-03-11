@@ -62,8 +62,19 @@ class DormantAccountAnalyzer:
             category=FindingCategory.DORMANT_ACCOUNT,
             account_id=account.id,
             title=f"Dormant account - inactive for {days_inactive} days",
-            description=f"Account {account.username} has been inactive for {days_inactive} days, exceeding the threshold of {self.dormant_threshold_days} days. Dormant accounts pose security risks as they may have outdated permissions and could be compromised.",
-            remediation=f"Review account usage and consider: (1) Disabling the account if no longer needed, (2) Removing or reducing permissions, (3) Contacting the account owner to verify continued need.",
+            description=(
+                f"Account {account.username} has been inactive for"
+                f" {days_inactive} days, exceeding the threshold of"
+                f" {self.dormant_threshold_days} days. Dormant accounts"
+                " pose security risks as they may have outdated"
+                " permissions and could be compromised."
+            ),
+            remediation=(
+                "Review account usage and consider: (1) Disabling the"
+                " account if no longer needed, (2) Removing or reducing"
+                " permissions, (3) Contacting the account owner to"
+                " verify continued need."
+            ),
             metadata={
                 "days_inactive": days_inactive,
                 "threshold": self.dormant_threshold_days,

@@ -2,7 +2,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -22,10 +22,10 @@ class Account(BaseModel):
     id: str = Field(..., description="Unique account identifier")
     provider: str = Field(..., description="IAM provider (aws, azure, gcp, sailpoint)")
     username: str = Field(..., description="Account username/login")
-    email: Optional[str] = Field(None, description="Account email address")
-    created_at: Optional[datetime] = Field(None, description="Account creation timestamp")
-    last_login: Optional[datetime] = Field(None, description="Last successful login timestamp")
-    last_activity: Optional[datetime] = Field(None, description="Last activity/access timestamp")
+    email: str | None = Field(None, description="Account email address")
+    created_at: datetime | None = Field(None, description="Account creation timestamp")
+    last_login: datetime | None = Field(None, description="Last successful login timestamp")
+    last_activity: datetime | None = Field(None, description="Last activity/access timestamp")
     status: AccountStatus = Field(default=AccountStatus.ACTIVE, description="Account status")
     mfa_enabled: bool = Field(default=False, description="Whether MFA/2FA is enabled")
     has_admin_role: bool = Field(default=False, description="Whether account has admin privileges")
@@ -76,7 +76,7 @@ class Account(BaseModel):
         days_since_activity = (datetime.now(last_used.tzinfo) - last_used).days
         return days_since_activity > threshold_days
 
-    def days_since_activity(self) -> Optional[int]:
+    def days_since_activity(self) -> int | None:
         """Calculate days since last activity.
 
         Returns:

@@ -1,6 +1,6 @@
 """Unit tests for analysis modules."""
 
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -9,7 +9,7 @@ from accessaudit.analysis.dormant import DormantAccountAnalyzer
 from accessaudit.analysis.permissions import PermissionAnalyzer
 from accessaudit.analysis.rules import Rule, RuleEngine
 from accessaudit.core.analyzer import Analyzer
-from accessaudit.models import Account, AccountStatus, FindingCategory, FindingSeverity, Permission
+from accessaudit.models import Account, FindingCategory, FindingSeverity, Permission
 
 
 class TestPermissionAnalyzer:
@@ -144,7 +144,7 @@ class TestDormantAccountAnalyzer:
             id="user-1",
             provider="aws",
             username="dormant-user",
-            last_activity=datetime.now(timezone.utc) - timedelta(days=200),  # > 180 days = MEDIUM
+            last_activity=datetime.now(UTC) - timedelta(days=200),  # > 180 days = MEDIUM
         )
 
         findings = await analyzer.analyze([dormant_account])
@@ -160,7 +160,7 @@ class TestDormantAccountAnalyzer:
             id="user-1",
             provider="aws",
             username="active-user",
-            last_activity=datetime.now(timezone.utc) - timedelta(days=30),
+            last_activity=datetime.now(UTC) - timedelta(days=30),
         )
 
         findings = await analyzer.analyze([active_account])
@@ -174,7 +174,7 @@ class TestDormantAccountAnalyzer:
             id="user-1",
             provider="aws",
             username="very-dormant",
-            last_activity=datetime.now(timezone.utc) - timedelta(days=400),
+            last_activity=datetime.now(UTC) - timedelta(days=400),
         )
 
         findings = await analyzer.analyze([very_dormant])

@@ -1,8 +1,7 @@
 """AWS IAM connector."""
 
 import hashlib
-import json
-from datetime import datetime, timezone
+from datetime import UTC
 from typing import Any
 
 import boto3
@@ -43,7 +42,7 @@ class AWSConnector(BaseConnector):
             self.iam_client.get_user()
         except NoCredentialsError as e:
             raise ConnectionError(f"AWS credentials not found: {e}") from e
-        except ClientError as e:
+        except ClientError:
             # If GetUser fails, try listing users (works with broader permissions)
             try:
                 self.iam_client.list_users(MaxItems=1)
@@ -277,11 +276,11 @@ class AWSConnector(BaseConnector):
         # Convert timezone-aware datetime to naive (or ensure consistency)
         created_at = user.get("CreateDate")
         if created_at and created_at.tzinfo is not None:
-            created_at = created_at.replace(tzinfo=timezone.utc)
+            created_at = created_at.replace(tzinfo=UTC)
 
         last_activity = last_used_info
         if last_activity and last_activity.tzinfo is not None:
-            last_activity = last_activity.replace(tzinfo=timezone.utc)
+            last_activity = last_activity.replace(tzinfo=UTC)
 
         return Account(
             id=user_arn,

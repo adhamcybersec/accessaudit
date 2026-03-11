@@ -158,8 +158,12 @@ class Reporter:
                 {
                     "priority": 1,
                     "title": "Address Critical Security Issues",
-                    "description": f"Found {len(critical_findings)} critical security issues that require immediate attention.",
-                    "actions": list(set(f.remediation for f in critical_findings[:3])),
+                    "description": (
+                        f"Found {len(critical_findings)} critical"
+                        " security issues that require"
+                        " immediate attention."
+                    ),
+                    "actions": list({f.remediation for f in critical_findings[:3]}),
                 }
             )
 
@@ -187,7 +191,10 @@ class Reporter:
                 {
                     "priority": 3,
                     "title": "Review and Remove Dormant Accounts",
-                    "description": f"Found {len(dormant_findings)} dormant accounts that may pose security risks.",
+                    "description": (
+                        f"Found {len(dormant_findings)} dormant"
+                        " accounts that may pose security risks."
+                    ),
                     "actions": [
                         "Review each dormant account with team leads",
                         "Disable accounts no longer in use",
@@ -202,7 +209,9 @@ class Reporter:
                 {
                     "priority": 4,
                     "title": "Implement Regular Access Reviews",
-                    "description": "High number of findings suggests lack of regular access reviews.",
+                    "description": (
+                        "High number of findings suggests" " lack of regular access reviews."
+                    ),
                     "actions": [
                         "Schedule quarterly access reviews",
                         "Implement automated permission monitoring",
@@ -246,7 +255,10 @@ class Reporter:
             f"  Total Policies:     {summary.get('total_policies', 0)}",
             f"  Total Findings:     {summary.get('total_findings', 0)}",
             "",
-            f"  Risk Score:         {summary.get('total_risk_score', 0)} (avg: {summary.get('average_risk_score', 0)})",
+            (
+                f"  Risk Score:         {summary.get('total_risk_score', 0)}"
+                f" (avg: {summary.get('average_risk_score', 0)})"
+            ),
             "",
             "-" * 60,
             "                  Findings by Severity",

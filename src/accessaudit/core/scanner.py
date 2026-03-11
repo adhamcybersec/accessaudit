@@ -5,8 +5,8 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
 
-from accessaudit.connectors.base import BaseConnector
 from accessaudit.connectors.aws import AWSConnector
+from accessaudit.connectors.base import BaseConnector
 from accessaudit.models import Account, Permission, Policy
 
 try:

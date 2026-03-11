@@ -1,14 +1,14 @@
 """Tests for Azure AD connector."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
+
 from accessaudit.connectors.azure import AzureConnector
-from accessaudit.models import Account, AccountStatus, Permission, Policy
+from accessaudit.models import AccountStatus
 from tests.fixtures.azure_fixtures import (
-    make_azure_user,
-    make_azure_directory_role,
     make_azure_rbac_assignment,
+    make_azure_user,
 )
 
 

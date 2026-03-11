@@ -2,7 +2,6 @@
 
 import asyncio
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -46,7 +45,7 @@ def main(
         is_eager=True,
         help="Show version and exit",
     ),
-    config_file: Optional[str] = typer.Option(
+    config_file: str | None = typer.Option(
         None,
         "--config",
         "-c",
@@ -76,9 +75,7 @@ scan_app = typer.Typer(help="Scan IAM providers")
 app.add_typer(scan_app, name="scan")
 
 
-def _run_scan(
-    provider: str, provider_config: dict, output: Optional[str], no_analyze: bool
-) -> None:
+def _run_scan(provider: str, provider_config: dict, output: str | None, no_analyze: bool) -> None:
     """Run a scan for the given provider with shared logic."""
     global _last_scan_result, _last_analysis_result
 
@@ -94,7 +91,9 @@ def _run_scan(
 
         console.print(f"[green]✓[/green] Found {len(scan_result.accounts)} accounts")
         console.print(
-            f"[green]✓[/green] Found {sum(len(p) for p in scan_result.permissions.values())} permissions"
+            "[green]✓[/green] Found "
+            f"{sum(len(p) for p in scan_result.permissions.values())}"
+            " permissions"
         )
         console.print(f"[green]✓[/green] Found {len(scan_result.policies)} policies")
 
@@ -119,18 +118,18 @@ def _run_scan(
 
     except Exception as e:
         console.print(f"[red]✗ Scan failed: {e}[/red]")
-        raise typer.Exit(1)
+        raise typer.Exit(1) from None
 
 
 @scan_app.command("aws")
 def scan_aws(
-    region: Optional[str] = typer.Option(
+    region: str | None = typer.Option(
         None,
         "--region",
         "-r",
         help="AWS region to scan (default: from config or us-east-1)",
     ),
-    output: Optional[str] = typer.Option(
+    output: str | None = typer.Option(
         None,
         "--output",
         "-o",
@@ -156,13 +155,13 @@ def scan_aws(
 
 @scan_app.command("azure")
 def scan_azure(
-    tenant_id: Optional[str] = typer.Option(
+    tenant_id: str | None = typer.Option(
         None,
         "--tenant-id",
         "-t",
         help="Azure AD tenant ID",
     ),
-    output: Optional[str] = typer.Option(
+    output: str | None = typer.Option(
         None,
         "--output",
         "-o",
@@ -187,13 +186,13 @@ def scan_azure(
 
 @scan_app.command("gcp")
 def scan_gcp(
-    project: Optional[str] = typer.Option(
+    project: str | None = typer.Option(
         None,
         "--project",
         "-p",
         help="GCP project ID",
     ),
-    output: Optional[str] = typer.Option(
+    output: str | None = typer.Option(
         None,
         "--output",
         "-o",
@@ -224,13 +223,13 @@ app.add_typer(findings_app, name="findings")
 
 @findings_app.command("list")
 def findings_list(
-    severity: Optional[str] = typer.Option(
+    severity: str | None = typer.Option(
         None,
         "--severity",
         "-s",
         help="Filter by severity (critical, high, medium, low)",
     ),
-    category: Optional[str] = typer.Option(
+    category: str | None = typer.Option(
         None,
         "--category",
         help="Filter by category",
@@ -378,7 +377,8 @@ def report_generate(
     valid_templates = ("executive", "soc2", "iso27001")
     if template not in valid_templates:
         console.print(
-            f"[red]Unsupported template: {template}. Choose from: {', '.join(valid_templates)}[/red]"
+            f"[red]Unsupported template: {template}."
+            f" Choose from: {', '.join(valid_templates)}[/red]"
         )
         raise typer.Exit(1)
 
@@ -481,8 +481,10 @@ def serve(
     try:
         import uvicorn
     except ImportError:
-        console.print("[red]uvicorn is not installed. Install it with: pip install uvicorn[/red]")
-        raise typer.Exit(1)
+        console.print(
+            "[red]uvicorn is not installed." " Install it with: pip install uvicorn[/red]"
+        )
+        raise typer.Exit(1) from None
 
     console.print(
         Panel.fit(

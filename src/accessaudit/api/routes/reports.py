@@ -1,6 +1,6 @@
 """Report generation endpoints."""
 
-from fastapi import APIRouter, HTTPException, Request, Query
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from accessaudit.core.reporter import Reporter

@@ -1,14 +1,15 @@
 """Tests for GCP IAM connector."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
+import pytest
+
 from accessaudit.connectors.gcp import GCPConnector
-from accessaudit.models import Account, AccountStatus, Permission, Policy
+from accessaudit.models import AccountStatus
 from tests.fixtures.gcp_fixtures import (
-    make_gcp_service_account,
     make_gcp_iam_binding,
     make_gcp_role,
+    make_gcp_service_account,
 )
 
 
