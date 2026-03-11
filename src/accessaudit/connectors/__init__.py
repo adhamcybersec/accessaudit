@@ -3,4 +3,9 @@
 from accessaudit.connectors.base import BaseConnector
 from accessaudit.connectors.aws import AWSConnector
 
-__all__ = ["BaseConnector", "AWSConnector"]
+try:
+    from accessaudit.connectors.azure import AzureConnector
+except ImportError:
+    AzureConnector = None
+
+__all__ = ["BaseConnector", "AWSConnector", "AzureConnector"]
