@@ -8,4 +8,9 @@ try:
 except ImportError:
     AzureConnector = None
 
-__all__ = ["BaseConnector", "AWSConnector", "AzureConnector"]
+try:
+    from accessaudit.connectors.gcp import GCPConnector
+except ImportError:
+    GCPConnector = None
+
+__all__ = ["BaseConnector", "AWSConnector", "AzureConnector", "GCPConnector"]
