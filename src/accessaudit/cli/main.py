@@ -76,44 +76,18 @@ scan_app = typer.Typer(help="Scan IAM providers")
 app.add_typer(scan_app, name="scan")
 
 
-@scan_app.command("aws")
-def scan_aws(
-    region: Optional[str] = typer.Option(
-        None,
-        "--region",
-        "-r",
-        help="AWS region to scan (default: from config or us-east-1)",
-    ),
-    output: Optional[str] = typer.Option(
-        None,
-        "--output",
-        "-o",
-        help="Output file path for JSON report",
-    ),
-    no_analyze: bool = typer.Option(
-        False,
-        "--no-analyze",
-        help="Skip analysis (scan only)",
-    ),
-) -> None:
-    """Scan AWS IAM for security issues."""
+def _run_scan(provider: str, provider_config: dict, output: Optional[str], no_analyze: bool) -> None:
+    """Run a scan for the given provider with shared logic."""
     global _last_scan_result, _last_analysis_result
 
-    console.print(Panel.fit("[bold blue]AccessAudit - AWS IAM Scan[/bold blue]"))
-
-    # Build provider config
-    provider_config = {}
-    if _config:
-        provider_config = _config.providers.aws.model_dump()
-    if region:
-        provider_config["regions"] = [region]
-        provider_config["region"] = region
+    provider_label = provider.upper()
+    console.print(Panel.fit(f"[bold blue]AccessAudit - {provider_label} IAM Scan[/bold blue]"))
 
     try:
         # Run scan
-        console.print("\n[yellow]Starting AWS IAM scan...[/yellow]")
+        console.print(f"\n[yellow]Starting {provider_label} IAM scan...[/yellow]")
         scanner = Scanner()
-        scan_result = asyncio.run(scanner.scan("aws", provider_config))
+        scan_result = asyncio.run(scanner.scan(provider, provider_config))
         _last_scan_result = scan_result
 
         console.print(f"[green]✓[/green] Found {len(scan_result.accounts)} accounts")
@@ -146,6 +120,100 @@ def scan_aws(
     except Exception as e:
         console.print(f"[red]✗ Scan failed: {e}[/red]")
         raise typer.Exit(1)
+
+
+@scan_app.command("aws")
+def scan_aws(
+    region: Optional[str] = typer.Option(
+        None,
+        "--region",
+        "-r",
+        help="AWS region to scan (default: from config or us-east-1)",
+    ),
+    output: Optional[str] = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Output file path for JSON report",
+    ),
+    no_analyze: bool = typer.Option(
+        False,
+        "--no-analyze",
+        help="Skip analysis (scan only)",
+    ),
+) -> None:
+    """Scan AWS IAM for security issues."""
+    # Build provider config
+    provider_config = {}
+    if _config:
+        provider_config = _config.providers.aws.model_dump()
+    if region:
+        provider_config["regions"] = [region]
+        provider_config["region"] = region
+
+    _run_scan("aws", provider_config, output, no_analyze)
+
+
+@scan_app.command("azure")
+def scan_azure(
+    tenant_id: Optional[str] = typer.Option(
+        None,
+        "--tenant-id",
+        "-t",
+        help="Azure AD tenant ID",
+    ),
+    output: Optional[str] = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Output file path for JSON report",
+    ),
+    no_analyze: bool = typer.Option(
+        False,
+        "--no-analyze",
+        help="Skip analysis (scan only)",
+    ),
+) -> None:
+    """Scan Azure AD IAM for security issues."""
+    # Build provider config
+    provider_config = {}
+    if _config and hasattr(_config.providers, "azure"):
+        provider_config = _config.providers.azure.model_dump()
+    if tenant_id:
+        provider_config["tenant_id"] = tenant_id
+
+    _run_scan("azure", provider_config, output, no_analyze)
+
+
+@scan_app.command("gcp")
+def scan_gcp(
+    project: Optional[str] = typer.Option(
+        None,
+        "--project",
+        "-p",
+        help="GCP project ID",
+    ),
+    output: Optional[str] = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Output file path for JSON report",
+    ),
+    no_analyze: bool = typer.Option(
+        False,
+        "--no-analyze",
+        help="Skip analysis (scan only)",
+    ),
+) -> None:
+    """Scan GCP IAM for security issues."""
+    # Build provider config
+    provider_config = {}
+    if _config and hasattr(_config.providers, "gcp"):
+        provider_config = _config.providers.gcp.model_dump()
+    if project:
+        provider_config["project_id"] = project
+
+    _run_scan("gcp", provider_config, output, no_analyze)
 
 
 # ============== FINDINGS COMMANDS ==============
@@ -284,11 +352,29 @@ def report_generate(
         "json",
         "--format",
         "-f",
-        help="Report format (json)",
+        help="Report format: json, html, pdf",
+    ),
+    template: str = typer.Option(
+        "executive",
+        "--template",
+        "-t",
+        help="Report template: executive, soc2, iso27001",
     ),
 ) -> None:
     """Generate a report from the last scan."""
     global _last_scan_result, _last_analysis_result
+
+    valid_formats = ("json", "html", "pdf")
+    if format not in valid_formats:
+        console.print(f"[red]Unsupported format: {format}. Choose from: {', '.join(valid_formats)}[/red]")
+        raise typer.Exit(1)
+
+    valid_templates = ("executive", "soc2", "iso27001")
+    if template not in valid_templates:
+        console.print(
+            f"[red]Unsupported template: {template}. Choose from: {', '.join(valid_templates)}[/red]"
+        )
+        raise typer.Exit(1)
 
     if not _last_scan_result or not _last_analysis_result:
         console.print("[yellow]No scan results available. Run a scan first.[/yellow]")
@@ -302,9 +388,20 @@ def report_generate(
             reporter.generate_json_report(_last_scan_result, _last_analysis_result, output)
         )
         console.print(f"[green]✓[/green] JSON report saved to: {output}")
-    else:
-        console.print(f"[red]Unsupported format: {format}[/red]")
-        raise typer.Exit(1)
+    elif format == "html":
+        asyncio.run(
+            reporter.generate_html_report(
+                _last_scan_result, _last_analysis_result, template=template, output_path=output
+            )
+        )
+        console.print(f"[green]✓[/green] HTML report saved to: {output}")
+    elif format == "pdf":
+        asyncio.run(
+            reporter.generate_pdf_report(
+                _last_scan_result, _last_analysis_result, template=template, output_path=output
+            )
+        )
+        console.print(f"[green]✓[/green] PDF report saved to: {output}")
 
 
 @report_app.command("summary")
@@ -363,6 +460,39 @@ def config_show() -> None:
         yaml.dump(_config.to_dict(), default_flow_style=False),
         title="Current Configuration",
     ))
+
+
+# ============== SERVE COMMAND ==============
+
+
+@app.command()
+def serve(
+    host: str = typer.Option("0.0.0.0", help="Host to bind to"),
+    port: int = typer.Option(8000, help="Port to bind to"),
+    reload: bool = typer.Option(False, help="Enable auto-reload"),
+) -> None:
+    """Start the AccessAudit API server."""
+    try:
+        import uvicorn
+    except ImportError:
+        console.print(
+            "[red]uvicorn is not installed. Install it with: pip install uvicorn[/red]"
+        )
+        raise typer.Exit(1)
+
+    console.print(
+        Panel.fit(
+            f"[bold blue]AccessAudit API Server[/bold blue]\n"
+            f"Host: {host} | Port: {port} | Reload: {reload}"
+        )
+    )
+    uvicorn.run(
+        "accessaudit.api.app:create_app",
+        host=host,
+        port=port,
+        reload=reload,
+        factory=True,
+    )
 
 
 # ============== HELPER FUNCTIONS ==============
