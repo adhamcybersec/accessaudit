@@ -1,0 +1,113 @@
+[build-system]
+requires = ["setuptools>=65.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "accessaudit"
+version = "0.1.0"
+description = "IAM Access Review Automation Platform"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "AccessAudit Contributors"}
+]
+keywords = ["iam", "security", "audit", "compliance", "access-review"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: System :: Systems Administration :: Authentication/Directory",
+]
+
+dependencies = [
+    "boto3>=1.34.0",           # AWS SDK
+    "botocore>=1.34.0",
+    "fastapi>=0.110.0",        # API framework
+    "uvicorn[standard]>=0.27.0", # ASGI server
+    "pydantic>=2.6.0",         # Data validation
+    "pydantic-settings>=2.2.0",
+    "sqlalchemy>=2.0.0",       # ORM
+    "alembic>=1.13.0",         # Database migrations
+    "asyncpg>=0.29.0",         # PostgreSQL async driver
+    "redis>=5.0.0",            # Caching
+    "typer>=0.9.0",            # CLI framework
+    "rich>=13.7.0",            # Terminal formatting
+    "pyyaml>=6.0.1",           # Config parsing
+    "python-dotenv>=1.0.0",    # Environment variables
+    "httpx>=0.26.0",           # HTTP client
+    "pandas>=2.2.0",           # Data analysis
+    "scikit-learn>=1.4.0",     # ML for anomaly detection
+    "jinja2>=3.1.0",           # Template rendering
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-cov>=4.1.0",
+    "black>=24.0.0",
+    "ruff>=0.2.0",
+    "mypy>=1.8.0",
+    "pre-commit>=3.6.0",
+]
+
+azure = [
+    "msal>=1.26.0",
+    "msgraph-core>=1.0.0",
+]
+
+gcp = [
+    "google-cloud-iam>=2.14.0",
+    "google-auth>=2.27.0",
+]
+
+all = [
+    "accessaudit[azure,gcp]",
+]
+
+[project.scripts]
+accessaudit = "accessaudit.cli.main:app"
+
+[project.urls]
+Homepage = "https://github.com/adhampx/accessaudit"
+Documentation = "https://github.com/adhampx/accessaudit/docs"
+Repository = "https://github.com/adhampx/accessaudit"
+Issues = "https://github.com/adhampx/accessaudit/issues"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["accessaudit*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+select = ["E", "F", "I", "N", "W", "B", "C4", "UP"]
+ignore = []
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
