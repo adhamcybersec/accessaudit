@@ -1,12 +1,12 @@
 """Permission data model."""
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class PermissionScope(str, Enum):
+class PermissionScope(StrEnum):
     """Permission scope/level enumeration."""
 
     READ = "read"

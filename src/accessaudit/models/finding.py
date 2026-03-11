@@ -1,13 +1,13 @@
 """Finding data model."""
 
 from datetime import datetime
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class FindingSeverity(str, Enum):
+class FindingSeverity(StrEnum):
     """Finding severity levels."""
 
     CRITICAL = "critical"
@@ -17,7 +17,7 @@ class FindingSeverity(str, Enum):
     INFO = "info"
 
 
-class FindingCategory(str, Enum):
+class FindingCategory(StrEnum):
     """Finding category types."""
 
     EXCESSIVE_PERMISSIONS = "excessive_permissions"

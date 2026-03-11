@@ -1,12 +1,12 @@
 """Policy data model."""
 
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from pydantic import BaseModel, Field
 
 
-class PolicyEffect(str, Enum):
+class PolicyEffect(StrEnum):
     """Policy effect enumeration."""
 
     ALLOW = "Allow"
