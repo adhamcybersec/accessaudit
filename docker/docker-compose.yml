@@ -1,0 +1,95 @@
+# AccessAudit Development Stack
+# Usage: docker-compose up -d
+
+version: '3.8'
+
+services:
+  # ============== AccessAudit ==============
+  accessaudit:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: accessaudit
+    environment:
+      # AWS credentials (use IAM roles in production!)
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID:-}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY:-}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+      # Azure credentials
+      - AZURE_TENANT_ID=${AZURE_TENANT_ID:-}
+      - AZURE_CLIENT_ID=${AZURE_CLIENT_ID:-}
+      - AZURE_CLIENT_SECRET=${AZURE_CLIENT_SECRET:-}
+      # GCP credentials
+      - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT:-}
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/gcp-credentials.json
+    volumes:
+      - ./config:/app/config:ro
+      - ./reports:/app/reports
+      - ./credentials:/app/credentials:ro
+    networks:
+      - accessaudit-net
+    depends_on:
+      - postgres
+      - redis
+
+  # ============== PostgreSQL ==============
+  postgres:
+    image: postgres:16-alpine
+    container_name: accessaudit-postgres
+    environment:
+      POSTGRES_USER: accessaudit
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-accessaudit_dev}
+      POSTGRES_DB: accessaudit
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - accessaudit-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U accessaudit"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============== Redis ==============
+  redis:
+    image: redis:7-alpine
+    container_name: accessaudit-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - accessaudit-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============== LocalStack (for testing) ==============
+  localstack:
+    image: localstack/localstack:latest
+    container_name: accessaudit-localstack
+    profiles:
+      - testing
+    environment:
+      - SERVICES=iam,sts
+      - DEBUG=1
+    ports:
+      - "4566:4566"
+    volumes:
+      - localstack-data:/var/lib/localstack
+    networks:
+      - accessaudit-net
+
+volumes:
+  postgres-data:
+  redis-data:
+  localstack-data:
+
+networks:
+  accessaudit-net:
+    driver: bridge
