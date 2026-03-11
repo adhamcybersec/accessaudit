@@ -63,8 +63,9 @@ logs/
 *.db
 *.sqlite3
 
-# Reports
+# Reports (output)
 reports/
+!src/**/templates/reports/
 *.json
 *.pdf
 

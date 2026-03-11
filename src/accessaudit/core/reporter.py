@@ -5,9 +5,22 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from jinja2 import Environment, FileSystemLoader
+
 from accessaudit.core.analyzer import AnalysisResult
+from accessaudit.core.compliance.mappings import ComplianceMapper
 from accessaudit.core.scanner import ScanResult
 from accessaudit.models import FindingSeverity
+
+# Template directory for Jinja2 HTML templates
+_TEMPLATES_DIR = Path(__file__).parent / "templates" / "reports"
+
+# Map template names to template files and compliance frameworks
+_TEMPLATE_MAP = {
+    "executive": {"file": "executive_report.html", "framework": None},
+    "soc2": {"file": "soc2_report.html", "framework": "soc2"},
+    "iso27001": {"file": "iso27001_report.html", "framework": "iso27001"},
+}
 
 
 class Reporter:
@@ -256,3 +269,92 @@ class Reporter:
         ])
 
         return "\n".join(lines)
+
+    async def generate_html_report(
+        self,
+        scan_result: ScanResult,
+        analysis_result: AnalysisResult,
+        template: str = "executive",
+        output_path: str | Path | None = None,
+    ) -> str:
+        """Generate an HTML report using Jinja2 templates.
+
+        Args:
+            scan_result: Scan result
+            analysis_result: Analysis result
+            template: Template name ("executive", "soc2", or "iso27001")
+            output_path: Optional path to write the HTML file
+
+        Returns:
+            Rendered HTML string
+        """
+        template_info = _TEMPLATE_MAP.get(template)
+        if template_info is None:
+            raise ValueError(
+                f"Unknown template: '{template}'. "
+                f"Available templates: {', '.join(_TEMPLATE_MAP.keys())}"
+            )
+
+        env = Environment(
+            loader=FileSystemLoader(str(_TEMPLATES_DIR)),
+            autoescape=True,
+        )
+        jinja_template = env.get_template(template_info["file"])
+
+        # Build template context
+        context: dict[str, Any] = {
+            "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "provider": scan_result.provider,
+            "scan_id": scan_result.scan_id,
+            "summary": analysis_result.summary,
+            "findings": analysis_result.findings,
+            "severity_counts": analysis_result.summary.get("findings_by_severity", {}),
+        }
+
+        # For compliance templates, add control mappings
+        framework = template_info["framework"]
+        if framework:
+            mapper = ComplianceMapper()
+            context["controls"] = mapper.map_findings(framework, analysis_result.findings)
+
+        html = jinja_template.render(**context)
+
+        if output_path:
+            output_path = Path(output_path)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_text(html)
+
+        return html
+
+    async def generate_pdf_report(
+        self,
+        scan_result: ScanResult,
+        analysis_result: AnalysisResult,
+        template: str = "executive",
+        output_path: str | Path | None = None,
+    ) -> bytes:
+        """Generate a PDF report by rendering HTML and converting via weasyprint.
+
+        Args:
+            scan_result: Scan result
+            analysis_result: Analysis result
+            template: Template name ("executive", "soc2", or "iso27001")
+            output_path: Optional path to write the PDF file
+
+        Returns:
+            PDF content as bytes
+        """
+        import weasyprint
+
+        html = await self.generate_html_report(
+            scan_result, analysis_result, template=template
+        )
+
+        pdf_bytes = weasyprint.HTML(string=html).write_pdf()
+
+        if output_path:
+            output_path = Path(output_path)
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            output_path.write_bytes(pdf_bytes)
+
+        return pdf_bytes
