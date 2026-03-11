@@ -6,11 +6,11 @@ from accessaudit.connectors.base import BaseConnector
 try:
     from accessaudit.connectors.azure import AzureConnector
 except ImportError:
-    AzureConnector = None
+    AzureConnector = None  # type: ignore[assignment, misc]
 
 try:
     from accessaudit.connectors.gcp import GCPConnector
 except ImportError:
-    GCPConnector = None
+    GCPConnector = None  # type: ignore[assignment, misc]
 
 __all__ = ["BaseConnector", "AWSConnector", "AzureConnector", "GCPConnector"]

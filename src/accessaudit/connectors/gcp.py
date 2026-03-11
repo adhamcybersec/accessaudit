@@ -29,8 +29,8 @@ class GCPConnector(BaseConnector):
         super().__init__(config)
         self.project_id = config.get("project_id", "")
         self.credentials_file = config.get("credentials_file")
-        self._credentials = None
-        self._rm_client = None
+        self._credentials: Any = None
+        self._rm_client: Any = None
 
     async def connect(self) -> None:
         if not HAS_GCP:
@@ -185,7 +185,7 @@ class GCPConnector(BaseConnector):
 
     # --- Private helpers ---
 
-    async def _fetch_service_accounts(self) -> list[dict]:
+    async def _fetch_service_accounts(self) -> list[dict[str, Any]]:
         """Fetch service accounts via IAM API."""
         if not HAS_HTTPX or not self._credentials:
             return []
@@ -200,12 +200,13 @@ class GCPConnector(BaseConnector):
             async with httpx.AsyncClient() as client:
                 response = await client.get(url, headers=headers)
                 if response.status_code == 200:
-                    return response.json().get("accounts", [])
+                    accounts: list[dict[str, Any]] = response.json().get("accounts", [])
+                    return accounts
         except Exception:
             pass
         return []
 
-    async def _fetch_iam_bindings(self) -> list[dict]:
+    async def _fetch_iam_bindings(self) -> list[dict[str, Any]]:
         """Fetch IAM policy bindings for the project."""
         if not HAS_HTTPX or not self._credentials:
             return []
@@ -220,12 +221,13 @@ class GCPConnector(BaseConnector):
             async with httpx.AsyncClient() as client:
                 response = await client.post(url, headers=headers, json={})
                 if response.status_code == 200:
-                    return response.json().get("bindings", [])
+                    bindings: list[dict[str, Any]] = response.json().get("bindings", [])
+                    return bindings
         except Exception:
             pass
         return []
 
-    async def _fetch_roles(self) -> list[dict]:
+    async def _fetch_roles(self) -> list[dict[str, Any]]:
         """Fetch IAM roles (predefined + custom)."""
         if not HAS_HTTPX or not self._credentials:
             return []

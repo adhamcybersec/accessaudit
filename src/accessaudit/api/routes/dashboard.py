@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from fastapi import APIRouter, Query, Request
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
 router = APIRouter(tags=["dashboard"])
@@ -12,7 +13,7 @@ templates = Jinja2Templates(directory=str(_templates_dir))
 
 
 @router.get("/")
-async def dashboard_home(request: Request):
+async def dashboard_home(request: Request) -> HTMLResponse:
     """Dashboard home page with scan summary and recent findings."""
     scans = request.app.state.scans
     analyses = request.app.state.analyses
@@ -46,8 +47,8 @@ async def dashboard_home(request: Request):
     )
 
 
-@router.get("/scans", response_class=None)
-async def scans_page(request: Request):
+@router.get("/scans", response_class=HTMLResponse)
+async def scans_page(request: Request) -> HTMLResponse:
     """Scans list page with HTMX polling for running scans."""
     scans_list = list(request.app.state.scans.values())
     has_running = any(s.status in ("running", "pending") for s in scans_list)
@@ -62,12 +63,12 @@ async def scans_page(request: Request):
     )
 
 
-@router.get("/findings", response_class=None)
+@router.get("/findings", response_class=HTMLResponse)
 async def findings_page(
     request: Request,
     severity: str = Query(default="", description="Filter by severity"),
     category: str = Query(default="", description="Filter by category"),
-):
+) -> HTMLResponse:
     """Findings page with HTMX-powered filters."""
     analyses = request.app.state.analyses
 
@@ -96,8 +97,8 @@ async def findings_page(
     )
 
 
-@router.get("/reports", response_class=None)
-async def reports_page(request: Request):
+@router.get("/reports", response_class=HTMLResponse)
+async def reports_page(request: Request) -> HTMLResponse:
     """Reports generation page."""
     scans = list(request.app.state.scans.values())
     analyses = request.app.state.analyses
@@ -112,8 +113,8 @@ async def reports_page(request: Request):
     )
 
 
-@router.get("/rules-dashboard", response_class=None)
-async def rules_page(request: Request):
+@router.get("/rules-dashboard", response_class=HTMLResponse)
+async def rules_page(request: Request) -> HTMLResponse:
     """Policy rules management page."""
     from accessaudit.analysis.policy_engine import PolicyEngine
 

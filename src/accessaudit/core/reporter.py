@@ -330,6 +330,7 @@ class Reporter:
             loader=FileSystemLoader(str(_TEMPLATES_DIR)),
             autoescape=True,
         )
+        assert isinstance(template_info, dict)
         jinja_template = env.get_template(template_info["file"])
 
         # Build template context
@@ -343,7 +344,7 @@ class Reporter:
         }
 
         # For compliance templates, add control mappings
-        framework = template_info["framework"]
+        framework = template_info["framework"]  # type: ignore[index]
         if framework:
             mapper = ComplianceMapper()
             context["controls"] = mapper.map_findings(framework, analysis_result.findings)
@@ -379,7 +380,7 @@ class Reporter:
 
         html = await self.generate_html_report(scan_result, analysis_result, template=template)
 
-        pdf_bytes = weasyprint.HTML(string=html).write_pdf()
+        pdf_bytes: bytes = weasyprint.HTML(string=html).write_pdf()
 
         if output_path:
             output_path = Path(output_path)

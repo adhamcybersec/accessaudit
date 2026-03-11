@@ -136,17 +136,18 @@ class LogContext:
         """
         self.logger = logger
         self.extra = kwargs
-        self.old_factory = None
+        self.old_factory: Any = None
 
     def __enter__(self) -> "LogContext":
         """Enter context."""
         self.old_factory = logging.getLogRecordFactory()
 
         extra = self.extra
+        old = self.old_factory
 
         def record_factory(*args: Any, **kwargs: Any) -> logging.LogRecord:
-            record = self.old_factory(*args, **kwargs)
-            record.extra = extra
+            record: logging.LogRecord = old(*args, **kwargs)
+            record.extra = extra  # type: ignore[attr-defined]
             return record
 
         logging.setLogRecordFactory(record_factory)

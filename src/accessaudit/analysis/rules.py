@@ -123,15 +123,15 @@ class Rule:
 
         # Account conditions
         if "account.has_admin_role" in condition:
-            return context.get("account", Account).has_admin_role
+            return bool(context.get("account", Account).has_admin_role)
         if "account.mfa_enabled" in condition:
-            return context.get("account", Account).mfa_enabled
+            return bool(context.get("account", Account).mfa_enabled)
 
         # Policy conditions
         if "policy.has_wildcard_actions" in condition:
-            return context.get("policy", Policy).has_wildcard_actions()
+            return bool(context.get("policy", Policy).has_wildcard_actions())
         if "policy.has_wildcard_resources" in condition:
-            return context.get("policy", Policy).has_wildcard_resources()
+            return bool(context.get("policy", Policy).has_wildcard_resources())
 
         return False
 

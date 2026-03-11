@@ -12,12 +12,12 @@ from accessaudit.models import Account, Permission, Policy
 try:
     from accessaudit.connectors.azure import AzureConnector
 except ImportError:
-    AzureConnector = None
+    AzureConnector = None  # type: ignore[assignment, misc]
 
 try:
     from accessaudit.connectors.gcp import GCPConnector
 except ImportError:
-    GCPConnector = None
+    GCPConnector = None  # type: ignore[assignment, misc]
 
 
 @dataclass
@@ -177,7 +177,7 @@ class Scanner:
 
         scan_results = {}
         for item in results:
-            if isinstance(item, Exception):
+            if isinstance(item, BaseException):
                 print(f"Scan error: {item}")
             else:
                 provider, result = item

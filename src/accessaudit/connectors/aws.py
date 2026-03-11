@@ -21,7 +21,7 @@ class AWSConnector(BaseConnector):
             config: AWS configuration (access_key_id, secret_access_key, region, etc.)
         """
         super().__init__(config)
-        self.iam_client = None
+        self.iam_client: Any = None
         self.region = config.get("region", "us-east-1")
 
     async def connect(self) -> None:

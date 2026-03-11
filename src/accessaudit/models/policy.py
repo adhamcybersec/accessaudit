@@ -109,7 +109,7 @@ class Policy(BaseModel):
         Returns:
             List of permission dictionaries
         """
-        permissions = []
+        permissions: list[dict[str, Any]] = []
 
         if "Statement" not in self.document:
             return permissions

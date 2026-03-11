@@ -2,6 +2,7 @@
 
 import asyncio
 from pathlib import Path
+from typing import Any
 
 import typer
 from rich.console import Console
@@ -458,7 +459,7 @@ def config_show() -> None:
         console.print("[yellow]No configuration loaded.[/yellow]")
         return
 
-    import yaml
+    import yaml  # type: ignore[import-untyped]
 
     console.print(
         Panel(
@@ -504,7 +505,7 @@ def serve(
 # ============== HELPER FUNCTIONS ==============
 
 
-def _print_analysis_summary(analysis_result) -> None:
+def _print_analysis_summary(analysis_result: Any) -> None:
     """Print analysis summary to console."""
     summary = analysis_result.summary
 

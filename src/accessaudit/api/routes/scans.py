@@ -58,22 +58,23 @@ async def trigger_scan(request: Request, body: ScanRequest) -> dict:
 
 
 @router.get("/scans")
-async def list_scans(request: Request) -> list[dict]:
+async def list_scans(request: Request) -> list[dict[str, Any]]:
     """List all past scans."""
     return [scan.to_dict() for scan in request.app.state.scans.values()]
 
 
 @router.get("/scans/{scan_id}")
-async def get_scan(request: Request, scan_id: str) -> dict:
+async def get_scan(request: Request, scan_id: str) -> dict[str, Any]:
     """Get a specific scan result."""
     scan = request.app.state.scans.get(scan_id)
     if scan is None:
         raise HTTPException(status_code=404, detail="Scan not found")
-    return scan.to_dict()
+    result: dict[str, Any] = scan.to_dict()
+    return result
 
 
 @router.get("/scans/{scan_id}/findings")
-async def get_scan_findings(request: Request, scan_id: str) -> dict:
+async def get_scan_findings(request: Request, scan_id: str) -> dict[str, Any]:
     """Get findings for a scan (requires analysis to have been run)."""
     scan = request.app.state.scans.get(scan_id)
     if scan is None:
@@ -86,4 +87,5 @@ async def get_scan_findings(request: Request, scan_id: str) -> dict:
             detail="No analysis found for this scan. Run POST /api/v1/analyze/{scan_id} first.",
         )
 
-    return analysis.to_dict()
+    result: dict[str, Any] = analysis.to_dict()
+    return result

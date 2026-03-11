@@ -149,7 +149,8 @@ class PolicyEngine:
             stdout, stderr = await proc.communicate(input=input_json.encode())
 
             if proc.returncode == 0:
-                return json.loads(stdout.decode())
+                parsed: dict[str, Any] = json.loads(stdout.decode())
+                return parsed
             else:
                 print(f"OPA error: {stderr.decode()}")
                 return None

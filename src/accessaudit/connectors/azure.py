@@ -32,9 +32,9 @@ class AzureConnector(BaseConnector):
         self.client_id = config.get("client_id", "")
         self.client_secret = config.get("client_secret", "")
         self.subscription_id = config.get("subscription_id", "")
-        self._credential = None
-        self._graph_token = None
-        self._auth_client = None
+        self._credential: Any = None
+        self._graph_token: Any = None
+        self._auth_client: Any = None
 
     async def connect(self) -> None:
         if not HAS_AZURE:
@@ -314,10 +314,11 @@ class AzureConnector(BaseConnector):
         async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=headers)
             if response.status_code == 200:
-                return response.json()
+                result: dict[str, Any] = response.json()
+                return result
         return None
 
-    async def _fetch_users(self) -> list[dict]:
+    async def _fetch_users(self) -> list[dict[str, Any]]:
         """Fetch all Azure AD users via Graph API."""
         result = await self._graph_get(
             "/users?$select=id,displayName,userPrincipalName,accountEnabled,"
@@ -326,7 +327,7 @@ class AzureConnector(BaseConnector):
         if not result:
             return []
 
-        users = result.get("value", [])
+        users: list[dict[str, Any]] = result.get("value", [])
 
         # Handle pagination
         next_link = result.get("@odata.nextLink")
@@ -366,14 +367,15 @@ class AzureConnector(BaseConnector):
             role_members[role_name] = members
         return role_members
 
-    async def _fetch_directory_roles_for_user(self, user_id: str) -> list[dict]:
+    async def _fetch_directory_roles_for_user(self, user_id: str) -> list[dict[str, Any]]:
         """Fetch directory roles assigned to a specific user."""
         result = await self._graph_get(f"/users/{user_id}/memberOf/microsoft.graph.directoryRole")
         if not result:
             return []
-        return result.get("value", [])
+        roles: list[dict[str, Any]] = result.get("value", [])
+        return roles
 
-    async def _fetch_rbac_role_definitions(self) -> list[dict]:
+    async def _fetch_rbac_role_definitions(self) -> list[dict[str, Any]]:
         """Fetch RBAC role definitions via ARM."""
         if not self._auth_client:
             return []
@@ -388,7 +390,9 @@ class AzureConnector(BaseConnector):
         except Exception:
             return []
 
-    async def _fetch_rbac_assignments_for_principal(self, principal_id: str) -> list[dict]:
+    async def _fetch_rbac_assignments_for_principal(
+        self, principal_id: str
+    ) -> list[dict[str, Any]]:
         """Fetch RBAC role assignments for a principal."""
         if not self._auth_client:
             return []
