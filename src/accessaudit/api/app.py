@@ -7,7 +7,16 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from accessaudit.api.routes import dashboard, findings, health, notifications, reports, rules, scans
+from accessaudit.api.routes import (
+    dashboard,
+    findings,
+    health,
+    notifications,
+    reports,
+    rules,
+    scans,
+    schedules,
+)
 from accessaudit.auth.routes import router as auth_router
 from accessaudit.services.storage import InMemoryStorage
 
@@ -66,7 +75,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     logger.info("Storage mode: %s", app.state.storage_mode)
 
+    # Initialize scheduler
+    from accessaudit.scheduling.service import SchedulerService
+
+    scheduler = SchedulerService()
+    app.state.scheduler = scheduler
+    await scheduler.start()
+
     yield
+
+    # Stop scheduler
+    await scheduler.stop()
 
     # Teardown
     if app.state.db_available:
@@ -107,6 +126,7 @@ def create_app() -> FastAPI:
     app.include_router(rules.router)
     app.include_router(auth_router)
     app.include_router(notifications.router)
+    app.include_router(schedules.router)
     app.include_router(dashboard.router)
 
     return app
