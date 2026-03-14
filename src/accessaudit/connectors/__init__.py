@@ -13,4 +13,15 @@ try:
 except ImportError:
     GCPConnector = None  # type: ignore[assignment, misc]
 
-__all__ = ["BaseConnector", "AWSConnector", "AzureConnector", "GCPConnector"]
+try:
+    from accessaudit.connectors.sailpoint import SailPointConnector
+except ImportError:
+    SailPointConnector = None  # type: ignore[assignment, misc]
+
+__all__ = [
+    "BaseConnector",
+    "AWSConnector",
+    "AzureConnector",
+    "GCPConnector",
+    "SailPointConnector",
+]

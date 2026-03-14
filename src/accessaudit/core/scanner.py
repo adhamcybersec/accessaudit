@@ -19,6 +19,11 @@ try:
 except ImportError:
     GCPConnector = None  # type: ignore[assignment, misc]
 
+try:
+    from accessaudit.connectors.sailpoint import SailPointConnector
+except ImportError:
+    SailPointConnector = None  # type: ignore[assignment, misc]
+
 
 @dataclass
 class ScanResult:
@@ -82,6 +87,8 @@ class Scanner:
             connectors["azure"] = AzureConnector
         if GCPConnector is not None:
             connectors["gcp"] = GCPConnector
+        if SailPointConnector is not None:
+            connectors["sailpoint"] = SailPointConnector
 
         if provider not in connectors:
             raise ValueError(f"Unsupported provider: {provider}")

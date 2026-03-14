@@ -216,6 +216,54 @@ def scan_gcp(
     _run_scan("gcp", provider_config, output, no_analyze)
 
 
+@scan_app.command("sailpoint")
+def scan_sailpoint(
+    base_url: str = typer.Option(
+        ...,
+        "--base-url",
+        "-b",
+        help="SailPoint IIQ base URL",
+    ),
+    username: str | None = typer.Option(
+        None,
+        "--username",
+        "-u",
+        help="SailPoint username for Basic auth",
+    ),
+    password: str | None = typer.Option(
+        None,
+        "--password",
+        help="SailPoint password for Basic auth",
+    ),
+    token: str | None = typer.Option(
+        None,
+        "--token",
+        help="SailPoint OAuth2 Bearer token",
+    ),
+    output: str | None = typer.Option(
+        None,
+        "--output",
+        "-o",
+        help="Output file path for JSON report",
+    ),
+    no_analyze: bool = typer.Option(
+        False,
+        "--no-analyze",
+        help="Skip analysis (scan only)",
+    ),
+) -> None:
+    """Scan SailPoint IIQ for security issues."""
+    provider_config: dict[str, Any] = {"base_url": base_url}
+    if username:
+        provider_config["username"] = username
+    if password:
+        provider_config["password"] = password
+    if token:
+        provider_config["token"] = token
+
+    _run_scan("sailpoint", provider_config, output, no_analyze)
+
+
 # ============== FINDINGS COMMANDS ==============
 
 findings_app = typer.Typer(help="View and filter findings")
