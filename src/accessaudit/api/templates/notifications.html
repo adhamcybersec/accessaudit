@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Notifications - AccessAudit{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold text-gray-900">Notifications</h1>
+
+    <!-- Config Status -->
+    <div class="bg-white p-6 rounded-lg shadow border">
+        <h2 class="text-lg font-semibold mb-4">Configuration</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <span class="text-sm text-gray-500">Status:</span>
+                <span class="ml-2 px-2 py-1 text-xs font-medium rounded-full
+                    {% if config.enabled %}bg-green-100 text-green-800{% else %}bg-gray-100 text-gray-800{% endif %}">
+                    {{ 'Enabled' if config.enabled else 'Disabled' }}
+                </span>
+            </div>
+            <div>
+                <span class="text-sm text-gray-500">Providers:</span>
+                <span class="ml-2 text-sm font-medium">{{ config.provider_count }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- History -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b">
+            <h2 class="text-lg font-semibold">Notification History</h2>
+        </div>
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Event</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Provider</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for entry in history %}
+                <tr>
+                    <td class="px-6 py-4 text-sm text-gray-900">{{ entry.event_type }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ entry.provider }}</td>
+                    <td class="px-6 py-4">
+                        {% if entry.success %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Sent</span>
+                        {% else %}
+                        <span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Failed</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ entry.timestamp }}</td>
+                </tr>
+                {% endfor %}
+                {% if not history %}
+                <tr>
+                    <td colspan="4" class="px-6 py-8 text-center text-gray-500">No notifications sent yet.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

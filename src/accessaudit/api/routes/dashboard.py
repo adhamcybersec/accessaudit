@@ -123,6 +123,68 @@ async def reports_page(request: Request) -> HTMLResponse:
     )
 
 
+@router.get("/schedules", response_class=HTMLResponse)
+async def schedules_dashboard(request: Request) -> HTMLResponse:
+    """Schedules management page."""
+    scheduler = getattr(request.app.state, "scheduler", None)
+    schedule_list = []
+    if scheduler:
+        schedule_list = [s.model_dump(mode="json") for s in scheduler.list_schedules()]
+
+    return templates.TemplateResponse(
+        "schedules.html",
+        {
+            "request": request,
+            "schedules": schedule_list,
+        },
+    )
+
+
+@router.get("/notifications-dashboard", response_class=HTMLResponse)
+async def notifications_dashboard(request: Request) -> HTMLResponse:
+    """Notifications management page."""
+    manager = getattr(request.app.state, "notification_manager", None)
+    config = {
+        "enabled": manager is not None,
+        "provider_count": len(manager.providers) if manager else 0,
+    }
+    history = manager.history[-50:] if manager else []
+
+    return templates.TemplateResponse(
+        "notifications.html",
+        {
+            "request": request,
+            "config": config,
+            "history": history,
+        },
+    )
+
+
+@router.get("/remediation-dashboard", response_class=HTMLResponse)
+async def remediation_dashboard(request: Request) -> HTMLResponse:
+    """Remediation actions page."""
+    engine = getattr(request.app.state, "remediation_engine", None)
+    actions = []
+    counts = {"pending": 0, "approved": 0, "completed": 0, "failed": 0}
+
+    if engine:
+        all_actions = engine.list_actions()
+        actions = [a.model_dump(mode="json") for a in all_actions]
+        for a in all_actions:
+            status = a.status.value if hasattr(a.status, "value") else a.status
+            if status in counts:
+                counts[status] += 1
+
+    return templates.TemplateResponse(
+        "remediation.html",
+        {
+            "request": request,
+            "actions": actions,
+            "counts": counts,
+        },
+    )
+
+
 @router.get("/rules-dashboard", response_class=HTMLResponse)
 async def rules_page(request: Request) -> HTMLResponse:
     """Policy rules management page."""

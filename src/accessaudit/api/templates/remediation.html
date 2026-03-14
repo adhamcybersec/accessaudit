@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Remediation - AccessAudit{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <h1 class="text-2xl font-bold text-gray-900">Remediation Actions</h1>
+
+    <!-- Status Summary -->
+    <div class="grid grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+            <div class="text-2xl font-bold text-yellow-600">{{ counts.pending }}</div>
+            <div class="text-sm text-gray-500">Pending</div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+            <div class="text-2xl font-bold text-blue-600">{{ counts.approved }}</div>
+            <div class="text-sm text-gray-500">Approved</div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+            <div class="text-2xl font-bold text-green-600">{{ counts.completed }}</div>
+            <div class="text-sm text-gray-500">Completed</div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow text-center">
+            <div class="text-2xl font-bold text-red-600">{{ counts.failed }}</div>
+            <div class="text-sm text-gray-500">Failed</div>
+        </div>
+    </div>
+
+    <!-- Actions Table -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Account</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Provider</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Description</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for action in actions %}
+                <tr>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ action.action_type }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ action.account_id }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ action.provider }}</td>
+                    <td class="px-6 py-4">
+                        {% set status_colors = {
+                            'pending': 'bg-yellow-100 text-yellow-800',
+                            'approved': 'bg-blue-100 text-blue-800',
+                            'executing': 'bg-purple-100 text-purple-800',
+                            'completed': 'bg-green-100 text-green-800',
+                            'failed': 'bg-red-100 text-red-800',
+                            'rejected': 'bg-gray-100 text-gray-800',
+                            'cancelled': 'bg-gray-100 text-gray-800',
+                        } %}
+                        <span class="px-2 py-1 text-xs font-medium rounded-full {{ status_colors.get(action.status, '') }}">
+                            {{ action.status }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">{{ action.description[:80] }}</td>
+                </tr>
+                {% endfor %}
+                {% if not actions %}
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">No remediation actions. Run a scan and generate suggestions.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
