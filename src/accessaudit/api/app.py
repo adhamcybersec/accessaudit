@@ -12,6 +12,7 @@ from accessaudit.api.routes import (
     findings,
     health,
     notifications,
+    remediation,
     reports,
     rules,
     scans,
@@ -75,6 +76,11 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     logger.info("Storage mode: %s", app.state.storage_mode)
 
+    # Initialize remediation engine
+    from accessaudit.remediation.engine import RemediationEngine
+
+    app.state.remediation_engine = RemediationEngine()
+
     # Initialize scheduler
     from accessaudit.scheduling.service import SchedulerService
 
@@ -127,6 +133,7 @@ def create_app() -> FastAPI:
     app.include_router(auth_router)
     app.include_router(notifications.router)
     app.include_router(schedules.router)
+    app.include_router(remediation.router)
     app.include_router(dashboard.router)
 
     return app

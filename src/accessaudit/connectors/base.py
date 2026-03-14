@@ -103,6 +103,22 @@ class BaseConnector(ABC):
         """
         pass
 
+    async def remove_policy(self, account_id: str, policy_arn: str) -> dict[str, Any]:
+        """Remove a policy from an account. Override in subclass."""
+        raise NotImplementedError(f"{self.provider_name} does not support remove_policy")
+
+    async def disable_account(self, account_id: str) -> dict[str, Any]:
+        """Disable an account. Override in subclass."""
+        raise NotImplementedError(f"{self.provider_name} does not support disable_account")
+
+    async def enable_mfa(self, account_id: str) -> dict[str, Any]:
+        """Enable MFA for an account. Override in subclass."""
+        raise NotImplementedError(f"{self.provider_name} does not support enable_mfa")
+
+    async def reduce_permissions(self, account_id: str, policy_arn: str) -> dict[str, Any]:
+        """Reduce permissions for an account. Override in subclass."""
+        raise NotImplementedError(f"{self.provider_name} does not support reduce_permissions")
+
     def __repr__(self) -> str:
         """String representation of connector."""
         return f"<{self.__class__.__name__} provider={self.provider_name}>"
