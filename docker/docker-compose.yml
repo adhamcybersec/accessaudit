@@ -22,6 +22,10 @@ services:
       # GCP credentials
       - GOOGLE_CLOUD_PROJECT=${GOOGLE_CLOUD_PROJECT:-}
       - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/gcp-credentials.json
+      # Infrastructure
+      - DATABASE_URL=postgresql+asyncpg://accessaudit:${POSTGRES_PASSWORD:-accessaudit_dev}@postgres:5432/accessaudit
+      - REDIS_URL=redis://redis:6379/0
+      - AUTH_SECRET_KEY=${AUTH_SECRET_KEY:-change-me-in-production}
     volumes:
       - ./config:/app/config:ro
       - ./reports:/app/reports

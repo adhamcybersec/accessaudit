@@ -36,12 +36,22 @@ class GCPConfig(BaseModel):
     credentials_file: str | None = None
 
 
+class SailPointBaseConfig(BaseModel):
+    """SailPoint provider base configuration (used in ProvidersConfig)."""
+
+    enabled: bool = False
+    base_url: str | None = None
+    username: str | None = None
+    password: str | None = None
+
+
 class ProvidersConfig(BaseModel):
     """All provider configurations."""
 
     aws: AWSConfig = Field(default_factory=AWSConfig)
     azure: AzureConfig = Field(default_factory=AzureConfig)
     gcp: GCPConfig = Field(default_factory=GCPConfig)
+    sailpoint: SailPointBaseConfig = Field(default_factory=SailPointBaseConfig)
 
 
 class RuleConfig(BaseModel):
@@ -70,12 +80,62 @@ class ReportingConfig(BaseModel):
     output_dir: str = "./reports"
 
 
+class DatabaseConfig(BaseModel):
+    """Database configuration."""
+
+    url: str | None = None
+
+
+class RedisConfig(BaseModel):
+    """Redis configuration."""
+
+    url: str | None = None
+
+
+class AuthConfig(BaseModel):
+    """Authentication configuration."""
+
+    secret_key: str = "change-me-in-production"
+    token_expire_minutes: int = 60
+    require_auth: bool = False
+
+
+class SailPointConfig(BaseModel):
+    """SailPoint IIQ configuration."""
+
+    enabled: bool = False
+    base_url: str | None = None
+    username: str | None = None
+    password: str | None = None
+    token: str | None = None
+
+
+class NotificationProviderConfig(BaseModel):
+    """Single notification provider configuration."""
+
+    type: str  # slack, teams, webhook
+    webhook_url: str
+    min_severity: str = "medium"
+    events: list[str] = Field(default_factory=lambda: ["scan_completed", "critical_finding"])
+
+
+class NotificationConfig(BaseModel):
+    """Notification system configuration."""
+
+    enabled: bool = False
+    providers: list[NotificationProviderConfig] = Field(default_factory=list)
+
+
 class Config(BaseSettings):
     """Main AccessAudit configuration."""
 
     providers: ProvidersConfig = Field(default_factory=ProvidersConfig)
     analysis: AnalysisConfig = Field(default_factory=AnalysisConfig)
     reporting: ReportingConfig = Field(default_factory=ReportingConfig)
+    database: DatabaseConfig = Field(default_factory=DatabaseConfig)
+    redis: RedisConfig = Field(default_factory=RedisConfig)
+    auth: AuthConfig = Field(default_factory=AuthConfig)
+    notifications: NotificationConfig = Field(default_factory=NotificationConfig)
 
     class Config:
         """Pydantic settings configuration."""
@@ -171,6 +231,24 @@ def _apply_env_overrides(config: dict[str, Any]) -> dict[str, Any]:
         gcp_config["project_id"] = os.environ["GOOGLE_CLOUD_PROJECT"]
     if os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"):
         gcp_config["credentials_file"] = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+
+    # Database URL
+    if os.environ.get("DATABASE_URL"):
+        if "database" not in config:
+            config["database"] = {}
+        config["database"]["url"] = os.environ["DATABASE_URL"]
+
+    # Redis URL
+    if os.environ.get("REDIS_URL"):
+        if "redis" not in config:
+            config["redis"] = {}
+        config["redis"]["url"] = os.environ["REDIS_URL"]
+
+    # Auth secret key
+    if os.environ.get("AUTH_SECRET_KEY"):
+        if "auth" not in config:
+            config["auth"] = {}
+        config["auth"]["secret_key"] = os.environ["AUTH_SECRET_KEY"]
 
     return config
 

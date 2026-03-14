@@ -12,11 +12,21 @@ _templates_dir = Path(__file__).resolve().parent.parent / "templates"
 templates = Jinja2Templates(directory=str(_templates_dir))
 
 
+def _get_scans_dict(request: Request) -> dict:
+    """Get scans from legacy dict (dashboard uses dict access pattern)."""
+    return request.app.state.scans
+
+
+def _get_analyses_dict(request: Request) -> dict:
+    """Get analyses from legacy dict."""
+    return request.app.state.analyses
+
+
 @router.get("/")
 async def dashboard_home(request: Request) -> HTMLResponse:
     """Dashboard home page with scan summary and recent findings."""
-    scans = request.app.state.scans
-    analyses = request.app.state.analyses
+    scans = _get_scans_dict(request)
+    analyses = _get_analyses_dict(request)
 
     total_scans = len(scans)
     completed_scans = sum(1 for s in scans.values() if s.status == "completed")
@@ -50,7 +60,7 @@ async def dashboard_home(request: Request) -> HTMLResponse:
 @router.get("/scans", response_class=HTMLResponse)
 async def scans_page(request: Request) -> HTMLResponse:
     """Scans list page with HTMX polling for running scans."""
-    scans_list = list(request.app.state.scans.values())
+    scans_list = list(_get_scans_dict(request).values())
     has_running = any(s.status in ("running", "pending") for s in scans_list)
 
     return templates.TemplateResponse(
@@ -70,7 +80,7 @@ async def findings_page(
     category: str = Query(default="", description="Filter by category"),
 ) -> HTMLResponse:
     """Findings page with HTMX-powered filters."""
-    analyses = request.app.state.analyses
+    analyses = _get_analyses_dict(request)
 
     all_findings = []
     for scan_id, analysis in analyses.items():
@@ -100,8 +110,8 @@ async def findings_page(
 @router.get("/reports", response_class=HTMLResponse)
 async def reports_page(request: Request) -> HTMLResponse:
     """Reports generation page."""
-    scans = list(request.app.state.scans.values())
-    analyses = request.app.state.analyses
+    scans = list(_get_scans_dict(request).values())
+    analyses = _get_analyses_dict(request)
 
     return templates.TemplateResponse(
         "reports.html",

@@ -4,8 +4,22 @@ from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse, Response
 
 from accessaudit.core.reporter import Reporter
+from accessaudit.services.storage import StorageBackend
 
 router = APIRouter(prefix="/api/v1", tags=["reports"])
+
+
+def _get_storage(request: Request) -> StorageBackend:
+    """Get the storage backend from app state."""
+    storage = getattr(request.app.state, "storage", None)
+    if storage is not None:
+        return storage  # type: ignore[return-value]
+    from accessaudit.services.storage import InMemoryStorage
+
+    mem = InMemoryStorage()
+    mem.scans = request.app.state.scans
+    mem.analyses = request.app.state.analyses
+    return mem
 
 
 @router.get("/reports/{scan_id}")
@@ -16,11 +30,12 @@ async def get_report(
     template: str = Query(default="executive", description="Report template name"),
 ) -> Response:
     """Generate or download a report for a scan."""
-    scan = request.app.state.scans.get(scan_id)
+    storage = _get_storage(request)
+    scan = await storage.get_scan(scan_id)
     if scan is None:
         raise HTTPException(status_code=404, detail="Scan not found")
 
-    analysis = request.app.state.analyses.get(scan_id)
+    analysis = await storage.get_analysis(scan_id)
     if analysis is None:
         raise HTTPException(
             status_code=404,
