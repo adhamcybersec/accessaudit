@@ -282,6 +282,47 @@
 - [ ] Jira integration (create issues from findings)
 - [ ] PagerDuty integration (critical finding alerts)
 
+### PyPI Package Distribution
+- [ ] Finalize `pyproject.toml` metadata (description, classifiers, URLs, long_description)
+- [ ] Add `py.typed` marker file for PEP 561 type-checking support
+- [ ] Create `MANIFEST.in` to include templates, migrations, and rule files in sdist
+- [ ] Verify `python -m build` produces valid wheel and sdist
+- [ ] Set up Trusted Publisher on PyPI (GitHub Actions OIDC)
+- [ ] Add `publish` job to CI: build -> twine check -> upload to PyPI on tag push
+- [ ] Test installation: `pip install accessaudit` in clean venv
+- [ ] Test extras: `pip install accessaudit[azure]`, `pip install accessaudit[gcp]`, `pip install accessaudit[all]`
+- [ ] Verify CLI entry point works after pip install: `accessaudit --version`
+- [ ] Verify `accessaudit serve` works after pip install (templates bundled)
+- [ ] Add `CHANGELOG.md` with semantic versioning
+- [ ] Tag v0.2.0 release on GitHub with release notes
+
+### MCP Server (Model Context Protocol)
+- [ ] `src/accessaudit/mcp/__init__.py` - MCP package init
+- [ ] `src/accessaudit/mcp/server.py` - MCP server using `mcp` SDK
+  - [ ] Tool: `scan` - Trigger an IAM scan (provider, config) -> scan_id + status
+  - [ ] Tool: `get_scan` - Get scan result by ID -> scan summary
+  - [ ] Tool: `analyze` - Run analysis on a scan -> finding count + top findings
+  - [ ] Tool: `list_findings` - List findings with severity/category filters
+  - [ ] Tool: `get_finding` - Get detailed finding info by ID
+  - [ ] Tool: `generate_report` - Generate compliance report (json/html)
+  - [ ] Tool: `list_schedules` - List scheduled scans
+  - [ ] Tool: `create_schedule` - Create a cron-based scheduled scan
+  - [ ] Tool: `list_remediations` - List remediation actions
+  - [ ] Tool: `suggest_remediations` - Generate remediation suggestions for a scan
+  - [ ] Tool: `approve_remediation` - Approve a pending remediation action
+  - [ ] Tool: `health` - Check service health and component status
+  - [ ] Resource: `accessaudit://scans` - List of all scans as MCP resource
+  - [ ] Resource: `accessaudit://findings/{scan_id}` - Findings for a scan
+  - [ ] Resource: `accessaudit://config` - Current configuration summary
+- [ ] `src/accessaudit/mcp/tools.py` - Tool definitions with JSON Schema input/output
+- [ ] `src/accessaudit/mcp/resources.py` - MCP resource providers
+- [ ] Add `mcp>=1.0.0` to dependencies
+- [ ] CLI entry point: `accessaudit mcp` command to start MCP server (stdio transport)
+- [ ] `pyproject.toml` script entry: `accessaudit-mcp = "accessaudit.mcp.server:main"`
+- [ ] MCP config example for Claude Desktop / Claude Code (`claude_desktop_config.json`)
+- [ ] `tests/unit/test_mcp_server.py` - Tool invocation tests
+- [ ] Documentation: how to connect AccessAudit MCP to Claude Desktop / Claude Code
+
 ### Performance & Scale
 - [ ] Async bulk scanning (scan 100+ accounts concurrently)
 - [ ] Scan result diffing (only re-scan changed resources)
