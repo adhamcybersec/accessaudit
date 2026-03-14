@@ -118,7 +118,7 @@
 
 ---
 
-## Phase 2 Features ✅ COMPLETE
+## Phase 2: Multi-Provider + Dashboard ✅ COMPLETE
 
 - [x] Azure AD connector
 - [x] GCP IAM connector
@@ -130,17 +130,169 @@
 - [x] HTML + PDF report generation
 - [x] Integration tests for Phase 2 features
 
-## Phase 3 Features (Future)
+---
 
-- [ ] SailPoint IIQ integration
-- [ ] Slack/Teams notifications
-- [ ] Scheduled scans (cron)
-- [ ] Remediation automation (with approval workflow)
-- [ ] Multi-account scanning
-- [ ] Cross-account access analysis
+## Phase 2.5: Infrastructure Gaps ✅ COMPLETE
+
+### Database Layer ✅
+- [x] `src/accessaudit/db/engine.py` - AsyncEngine singleton, session factory
+- [x] `src/accessaudit/db/models.py` - SQLAlchemy 2.0 models (UserDB, ScanDB, AnalysisDB)
+- [x] `src/accessaudit/db/repository.py` - CRUD repositories with serialization
+- [x] `alembic.ini` + async migration environment
+- [x] Migration 001: users, scans, analyses tables
+
+### Redis Cache ✅
+- [x] `src/accessaudit/db/cache.py` - CacheService with graceful degradation
+  - [x] Get/set/invalidate for scans and analyses
+  - [x] 1-hour TTL, no-op when Redis unavailable
+
+### Storage Abstraction ✅
+- [x] `src/accessaudit/services/storage.py` - StorageBackend protocol
+  - [x] InMemoryStorage (backward compatible)
+  - [x] DatabaseStorage (repository + read-through cache)
+
+### Authentication ✅
+- [x] `src/accessaudit/auth/security.py` - bcrypt + JWT + API key utilities
+- [x] `src/accessaudit/auth/dependencies.py` - FastAPI auth dependencies
+- [x] `src/accessaudit/auth/routes.py` - Register, login, me, rotate-key
+- [x] `src/accessaudit/auth/models.py` - Pydantic auth models
+
+### Wiring ✅
+- [x] Lifespan context manager (DB, Redis, storage init/teardown)
+- [x] All routes migrated to StorageBackend
+- [x] Health endpoint with component status
+- [x] Config additions (DatabaseConfig, RedisConfig, AuthConfig)
+- [x] Docker Compose env vars (DATABASE_URL, REDIS_URL, AUTH_SECRET_KEY)
+
+### Infrastructure Tests ✅
+- [x] `tests/unit/test_storage.py` - InMemoryStorage tests
+- [x] `tests/unit/test_cache.py` - CacheService tests (with/without Redis)
+- [x] `tests/unit/test_auth.py` - Security utilities tests
+- [x] `tests/unit/test_auth_routes.py` - Auth endpoint tests
+
+### CI Updates ✅
+- [x] PostgreSQL + Redis service containers in CI
+- [x] Alembic migration step before integration tests
+- [x] `tests/integration/test_persistence.py` - Full persistence flow
 
 ---
 
-**MVP Completed:** 2026-03-11  
-**Developer:** Davis (autonomous implementation)  
-**Project:** AccessAudit v0.1.0
+## Phase 3: New Features ✅ COMPLETE
+
+### SailPoint IIQ Connector ✅
+- [x] `src/accessaudit/connectors/sailpoint.py` - SCIM 2.0 connector
+  - [x] SCIM Users -> Account mapping
+  - [x] Entitlements -> Permission mapping
+  - [x] Roles -> Policy mapping
+  - [x] HTTP Basic and OAuth2 Bearer auth
+  - [x] Pagination support
+- [x] Scanner and CLI integration (`scan sailpoint` command)
+- [x] `tests/unit/test_sailpoint_connector.py` - 10 tests
+- [x] `tests/fixtures/sailpoint_fixtures.py` - Mock SCIM responses
+
+### Notification System ✅
+- [x] `src/accessaudit/notifications/base.py` - NotificationEventType, Notification model, BaseProvider ABC
+- [x] `src/accessaudit/notifications/manager.py` - NotificationManager (routing, severity filter, 3x retry)
+- [x] `src/accessaudit/notifications/slack.py` - Slack Incoming Webhook (Block Kit)
+- [x] `src/accessaudit/notifications/teams.py` - Teams Incoming Webhook (Adaptive Cards)
+- [x] `src/accessaudit/notifications/webhook.py` - Generic webhook (HMAC signing)
+- [x] `src/accessaudit/api/routes/notifications.py` - Config, test, history endpoints
+- [x] `tests/unit/test_notifications.py` - 8 tests
+
+### Scheduled Scans ✅
+- [x] `src/accessaudit/scheduling/models.py` - ScheduledScan Pydantic + SQLAlchemy models
+- [x] `src/accessaudit/scheduling/service.py` - SchedulerService (cron via croniter, asyncio tasks)
+- [x] `src/accessaudit/api/routes/schedules.py` - CRUD + enable/disable/runs endpoints
+- [x] Migration 002: scheduled_scans table
+- [x] `tests/unit/test_scheduling.py` - 11 tests
+
+### Remediation Automation ✅
+- [x] `src/accessaudit/remediation/models.py` - State machine (PENDING -> APPROVED -> EXECUTING -> COMPLETED/FAILED)
+  - [x] RemediationStatus, RemediationActionType StrEnums
+  - [x] Valid transition map with enforcement
+- [x] `src/accessaudit/remediation/engine.py` - RemediationEngine (execute, rollback, retry)
+- [x] `src/accessaudit/remediation/suggestions.py` - Auto-generate actions from findings by category
+- [x] `src/accessaudit/api/routes/remediation.py` - Approve, reject, execute, rollback, bulk-approve
+- [x] `src/accessaudit/connectors/base.py` - Optional remediation methods on BaseConnector
+- [x] Migration 003: remediation_actions table
+- [x] `tests/unit/test_remediation.py` - 15 tests
+
+### Dashboard Updates ✅
+- [x] `src/accessaudit/api/templates/schedules.html` - Schedule management page
+- [x] `src/accessaudit/api/templates/notifications.html` - Notification config + history page
+- [x] `src/accessaudit/api/templates/remediation.html` - Remediation actions + status cards
+- [x] Updated `base.html` navigation (Schedules, Notifications, Remediation)
+
+### Integration Tests ✅
+- [x] `tests/integration/test_scheduled_scan.py` - Schedule CRUD lifecycle
+- [x] `tests/integration/test_remediation_workflow.py` - Suggest -> approve -> execute flow
+- [x] `tests/integration/test_notification_delivery.py` - Notification test endpoint
+
+### Final Stats
+- **198 tests passing** (121 Phase 1-2 + 77 Phase 2.5-3)
+- **Black, Ruff, mypy all clean**
+- **All existing tests preserved** via in-memory fallback
+
+---
+
+## Phase 4: Roadmap (Planned)
+
+### Multi-Account & Cross-Cloud
+- [ ] Multi-account AWS scanning (Organizations API, assume-role)
+- [ ] Cross-account access analysis (who can access what across accounts)
+- [ ] Unified identity view across AWS + Azure + GCP + SailPoint
+- [ ] Permission diff: compare two scans to detect drift
+
+### SSO & Identity Federation
+- [ ] SAML/OIDC SSO for dashboard login
+- [ ] Okta connector (SCIM + Okta API)
+- [ ] Auth0 connector
+- [ ] Ping Identity connector
+
+### Advanced Connectors
+- [ ] Kubernetes RBAC connector (ClusterRole, RoleBinding scanning)
+- [ ] GitHub/GitLab access connector (repo permissions, org roles)
+- [ ] HashiCorp Vault connector (policy + token auditing)
+- [ ] Snowflake IAM connector (role grants, warehouse access)
+
+### Remediation Playbooks
+- [ ] Composable action sequences (multi-step remediation)
+- [ ] Playbook templates (e.g., "offboard user" = disable + revoke + rotate)
+- [ ] Dry-run mode for remediation actions
+- [ ] AWS connector remediation implementation (detach_policy, disable_login, etc.)
+- [ ] Azure/GCP connector remediation methods
+
+### Analytics & Trends
+- [ ] Risk trend analysis over time (track risk score per scan)
+- [ ] Permission growth tracking (detect scope creep)
+- [ ] Compliance posture dashboard (trend charts)
+- [ ] Finding SLA tracking (time-to-remediate metrics)
+
+### Enterprise Features
+- [ ] Multi-tenant support (org-level isolation)
+- [ ] RBAC for dashboard (admin, auditor, viewer roles)
+- [ ] Audit log for all API actions
+- [ ] Rate limiting per API key
+- [ ] Data retention policies (auto-purge old scans)
+
+### Integrations
+- [ ] SIEM integration (Splunk, Elastic, Sentinel)
+- [ ] Terraform provider for policy-as-code deployment
+- [ ] ServiceNow ITSM integration (auto-create tickets from findings)
+- [ ] Jira integration (create issues from findings)
+- [ ] PagerDuty integration (critical finding alerts)
+
+### Performance & Scale
+- [ ] Async bulk scanning (scan 100+ accounts concurrently)
+- [ ] Scan result diffing (only re-scan changed resources)
+- [ ] Database partitioning for large scan histories
+- [ ] Redis cluster support
+- [ ] Horizontal scaling with shared scheduler (Redis-backed)
+
+---
+
+**Phase 1 Completed:** 2026-03-11
+**Phase 2 Completed:** 2026-03-12
+**Phase 2.5 Completed:** 2026-03-14
+**Phase 3 Completed:** 2026-03-14
+**Maintainer:** Adham Rashed ([@adhamcybersec](https://github.com/adhampx))
