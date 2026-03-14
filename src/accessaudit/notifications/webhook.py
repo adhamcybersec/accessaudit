@@ -6,7 +6,11 @@ import logging
 
 import httpx
 
-from accessaudit.notifications.base import BaseNotificationProvider, Notification, NotificationEventType
+from accessaudit.notifications.base import (
+    BaseNotificationProvider,
+    Notification,
+    NotificationEventType,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -32,9 +36,7 @@ class WebhookProvider(BaseNotificationProvider):
             import json
 
             body = json.dumps(payload)
-            sig = hmac.new(
-                self.secret.encode(), body.encode(), hashlib.sha256
-            ).hexdigest()
+            sig = hmac.new(self.secret.encode(), body.encode(), hashlib.sha256).hexdigest()
             headers["X-Signature-256"] = f"sha256={sig}"
 
         async with httpx.AsyncClient() as client:

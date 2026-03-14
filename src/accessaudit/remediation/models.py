@@ -75,9 +75,7 @@ class RemediationAction(BaseModel):
     def transition_to(self, new_status: RemediationStatus) -> None:
         """Transition to new status. Raises ValueError if invalid."""
         if not self.can_transition_to(new_status):
-            raise ValueError(
-                f"Invalid transition: {self.status} → {new_status}"
-            )
+            raise ValueError(f"Invalid transition: {self.status} → {new_status}")
         self.status = new_status
         self.updated_at = datetime.now()
 
@@ -87,9 +85,7 @@ class RemediationActionDB(Base):
 
     __tablename__ = "remediation_actions"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     scan_id: Mapped[str] = mapped_column(String(50), nullable=False)
     finding_id: Mapped[str] = mapped_column(String(50), nullable=False)
     action_type: Mapped[str] = mapped_column(String(50), nullable=False)
@@ -101,9 +97,7 @@ class RemediationActionDB(Base):
     parameters: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     rollback_data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )

@@ -214,7 +214,9 @@ class SailPointConnector(BaseConnector):
         name_obj = resource.get("name", {})
         display_name = resource.get("displayName", "")
         if not display_name and name_obj:
-            display_name = f"{name_obj.get('givenName', '')} {name_obj.get('familyName', '')}".strip()
+            display_name = (
+                f"{name_obj.get('givenName', '')} {name_obj.get('familyName', '')}".strip()
+            )
 
         # Extract metadata
         meta = resource.get("meta", {})
@@ -226,9 +228,7 @@ class SailPointConnector(BaseConnector):
 
         # Extract groups for admin detection
         groups = [g.get("display", "") for g in resource.get("groups", [])]
-        has_admin = any(
-            "admin" in g.lower() or "superuser" in g.lower() for g in groups
-        )
+        has_admin = any("admin" in g.lower() or "superuser" in g.lower() for g in groups)
 
         return Account(
             id=user_id,

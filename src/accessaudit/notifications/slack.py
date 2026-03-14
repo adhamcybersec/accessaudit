@@ -4,7 +4,11 @@ import logging
 
 import httpx
 
-from accessaudit.notifications.base import BaseNotificationProvider, Notification, NotificationEventType
+from accessaudit.notifications.base import (
+    BaseNotificationProvider,
+    Notification,
+    NotificationEventType,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +51,10 @@ class SlackProvider(BaseNotificationProvider):
                 "elements": [
                     {
                         "type": "mrkdwn",
-                        "text": f"*Severity:* {notification.severity.upper()} | *Event:* {notification.event_type.value}",
+                        "text": (
+                            f"*Severity:* {notification.severity.upper()}"
+                            f" | *Event:* {notification.event_type.value}"
+                        ),
                     }
                 ],
             },

@@ -38,7 +38,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
         engine = await init_db(database_url)
         if engine:
-            from sqlalchemy.ext.asyncio import AsyncSession
 
             app.state.session_factory = async_sessionmaker(engine, expire_on_commit=False)
             app.state.db_available = True

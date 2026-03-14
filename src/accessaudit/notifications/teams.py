@@ -4,7 +4,11 @@ import logging
 
 import httpx
 
-from accessaudit.notifications.base import BaseNotificationProvider, Notification, NotificationEventType
+from accessaudit.notifications.base import (
+    BaseNotificationProvider,
+    Notification,
+    NotificationEventType,
+)
 
 logger = logging.getLogger(__name__)
 

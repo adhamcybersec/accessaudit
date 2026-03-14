@@ -1,6 +1,5 @@
 """Repository layer for database operations."""
 
-import json
 import uuid
 from datetime import datetime
 from typing import Any
@@ -30,9 +29,7 @@ def _deserialize_scan(scan_db: ScanDB) -> ScanResult:
     data = scan_db.scan_data or {}
 
     accounts = [Account(**a) for a in data.get("accounts", [])]
-    permissions = {
-        k: [Permission(**p) for p in v] for k, v in data.get("permissions", {}).items()
-    }
+    permissions = {k: [Permission(**p) for p in v] for k, v in data.get("permissions", {}).items()}
     policies = [Policy(**p) for p in data.get("policies", [])]
 
     return ScanResult(
@@ -99,9 +96,7 @@ class ScanRepository:
 
     async def list_all(self) -> list[ScanResult]:
         """List all scans ordered by started_at desc."""
-        result = await self.session.execute(
-            select(ScanDB).order_by(ScanDB.started_at.desc())
-        )
+        result = await self.session.execute(select(ScanDB).order_by(ScanDB.started_at.desc()))
         return [_deserialize_scan(row) for row in result.scalars().all()]
 
     async def update_status(
@@ -162,9 +157,7 @@ class AnalysisRepository:
             uid = uuid.UUID(scan_id)
         except ValueError:
             return None
-        result = await self.session.execute(
-            select(AnalysisDB).where(AnalysisDB.scan_id == uid)
-        )
+        result = await self.session.execute(select(AnalysisDB).where(AnalysisDB.scan_id == uid))
         row = result.scalar_one_or_none()
         if row is None:
             return None

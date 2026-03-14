@@ -1,6 +1,6 @@
 """Authentication API routes."""
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request
 
 from accessaudit.auth.models import TokenResponse, UserCreate, UserLogin, UserResponse
 from accessaudit.auth.security import (
@@ -9,7 +9,6 @@ from accessaudit.auth.security import (
     hash_password,
     verify_password,
 )
-from accessaudit.db.models import UserDB
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 

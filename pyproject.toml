@@ -110,7 +110,7 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "B", "C4", "UP"]
-ignore = []
+ignore = ["B008"]  # Allow function calls in defaults (standard FastAPI Security pattern)
 
 [tool.mypy]
 python_version = "3.11"

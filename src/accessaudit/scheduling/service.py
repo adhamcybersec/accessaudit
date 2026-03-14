@@ -133,9 +133,7 @@ class SchedulerService:
         if schedule_id in self._tasks:
             self._tasks[schedule_id].cancel()
 
-        self._tasks[schedule_id] = asyncio.create_task(
-            self._run_schedule_loop(schedule_id)
-        )
+        self._tasks[schedule_id] = asyncio.create_task(self._run_schedule_loop(schedule_id))
 
     async def _run_schedule_loop(self, schedule_id: str) -> None:
         """Run a schedule in a loop, sleeping until next run time."""

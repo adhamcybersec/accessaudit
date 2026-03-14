@@ -2,7 +2,7 @@
 
 import os
 import secrets
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import bcrypt
 import jwt
@@ -29,12 +29,12 @@ def generate_api_key() -> str:
 
 def create_access_token(user_id: str, email: str) -> str:
     """Create a JWT access token."""
-    expire = datetime.now(timezone.utc) + timedelta(minutes=_TOKEN_EXPIRE_MINUTES)
+    expire = datetime.now(UTC) + timedelta(minutes=_TOKEN_EXPIRE_MINUTES)
     payload = {
         "sub": user_id,
         "email": email,
         "exp": expire,
-        "iat": datetime.now(timezone.utc),
+        "iat": datetime.now(UTC),
     }
     return jwt.encode(payload, _SECRET_KEY, algorithm=_ALGORITHM)
 

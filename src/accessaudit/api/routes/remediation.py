@@ -26,9 +26,7 @@ class BulkApproveRequest(BaseModel):
 
 
 @router.get("")
-async def list_remediations(
-    request: Request, scan_id: str | None = None
-) -> list[dict[str, Any]]:
+async def list_remediations(request: Request, scan_id: str | None = None) -> list[dict[str, Any]]:
     """List all remediation actions."""
     engine = _get_engine(request)
     actions = engine.list_actions(scan_id=scan_id)

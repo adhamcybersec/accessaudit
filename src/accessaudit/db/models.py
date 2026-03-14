@@ -19,16 +19,12 @@ class UserDB(Base):
 
     __tablename__ = "users"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)
     api_key: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     is_active: Mapped[bool] = mapped_column(default=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -43,9 +39,7 @@ class ScanDB(Base):
 
     __tablename__ = "scans"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     provider: Mapped[str] = mapped_column(String(50), nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
@@ -74,9 +68,7 @@ class AnalysisDB(Base):
 
     __tablename__ = "analyses"
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
-    )
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     scan_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("scans.id"), unique=True, nullable=False
     )

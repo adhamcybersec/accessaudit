@@ -43,12 +43,8 @@ async def test_create_schedule_invalid_cron():
 
 async def test_list_schedules():
     service = SchedulerService()
-    service.create_schedule(
-        ScheduledScan(name="S1", provider="aws", cron_expression="0 * * * *")
-    )
-    service.create_schedule(
-        ScheduledScan(name="S2", provider="azure", cron_expression="0 0 * * *")
-    )
+    service.create_schedule(ScheduledScan(name="S1", provider="aws", cron_expression="0 * * * *"))
+    service.create_schedule(ScheduledScan(name="S2", provider="azure", cron_expression="0 0 * * *"))
     assert len(service.list_schedules()) == 2
 
 

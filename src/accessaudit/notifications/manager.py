@@ -3,7 +3,10 @@
 import logging
 from typing import Any
 
-from accessaudit.notifications.base import BaseNotificationProvider, Notification, NotificationEventType
+from accessaudit.notifications.base import (
+    BaseNotificationProvider,
+    Notification,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +73,5 @@ class NotificationManager:
                     provider.__class__.__name__,
                 )
 
-        logger.error(
-            "Notification send exhausted retries for %s", provider.__class__.__name__
-        )
+        logger.error("Notification send exhausted retries for %s", provider.__class__.__name__)
         return False

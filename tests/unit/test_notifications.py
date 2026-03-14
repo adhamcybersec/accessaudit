@@ -1,7 +1,5 @@
 """Tests for notification system."""
 
-from unittest.mock import AsyncMock
-
 import pytest
 
 from accessaudit.notifications.base import (

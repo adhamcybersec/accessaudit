@@ -32,7 +32,11 @@ SCIM_USERS_RESPONSE = {
             "active": True,
             "emails": [{"value": "john.doe@example.com", "primary": True}],
             "groups": [
-                {"value": "grp-001", "display": "IT Administrators", "$ref": "/scim/v2/Groups/grp-001"}
+                {
+                    "value": "grp-001",
+                    "display": "IT Administrators",
+                    "$ref": "/scim/v2/Groups/grp-001",
+                }
             ],
             "meta": {
                 "resourceType": "User",
@@ -48,7 +52,11 @@ SCIM_USERS_RESPONSE = {
             "active": True,
             "emails": [{"value": "jane.smith@example.com", "primary": True}],
             "groups": [
-                {"value": "grp-002", "display": "Read Only Users", "$ref": "/scim/v2/Groups/grp-002"}
+                {
+                    "value": "grp-002",
+                    "display": "Read Only Users",
+                    "$ref": "/scim/v2/Groups/grp-002",
+                }
             ],
             "meta": {
                 "resourceType": "User",

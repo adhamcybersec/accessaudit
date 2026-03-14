@@ -4,7 +4,11 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 
 from accessaudit.api.app import create_app
-from accessaudit.notifications.base import BaseNotificationProvider, Notification, NotificationEventType
+from accessaudit.notifications.base import (
+    BaseNotificationProvider,
+    Notification,
+    NotificationEventType,
+)
 
 
 class MockProvider(BaseNotificationProvider):

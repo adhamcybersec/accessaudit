@@ -3,7 +3,7 @@
 import uuid
 
 import jwt
-from fastapi import Depends, HTTPException, Request, Security
+from fastapi import HTTPException, Request, Security
 from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
 
 from accessaudit.db.models import UserDB
