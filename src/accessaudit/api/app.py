@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from accessaudit.api.routes import dashboard, findings, health, reports, rules, scans
+from accessaudit.api.routes import dashboard, findings, health, notifications, reports, rules, scans
 from accessaudit.auth.routes import router as auth_router
 from accessaudit.services.storage import InMemoryStorage
 
@@ -106,6 +106,7 @@ def create_app() -> FastAPI:
     app.include_router(reports.router)
     app.include_router(rules.router)
     app.include_router(auth_router)
+    app.include_router(notifications.router)
     app.include_router(dashboard.router)
 
     return app
