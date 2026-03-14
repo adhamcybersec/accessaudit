@@ -28,8 +28,9 @@ AccessAudit provides:
 - **Backend:** Python 3.11+ (FastAPI for API, asyncio for concurrent IAM queries)
 - **Analysis Engine:** scikit-learn for ML, pandas for data processing
 - **Storage:** PostgreSQL for audit data, Redis for caching
-- **Frontend:** React + TypeScript (dashboard)
-- **CLI:** Click/Typer
+- **Auth:** JWT + API key authentication
+- **Frontend:** HTMX + Jinja2 + Tailwind CSS (dashboard)
+- **CLI:** Typer
 - **Deployment:** Docker, Kubernetes-ready
 
 ## Architecture
@@ -40,29 +41,29 @@ AccessAudit provides:
    - AWS IAM Connector (boto3)
    - Azure AD Connector (msal, msgraph)
    - GCP IAM Connector (google-cloud-iam)
-   - SailPoint Connector (REST API)
+   - SailPoint IIQ Connector (SCIM 2.0 API)
    - Extensible plugin system
 
 2. **Analysis Engine**
    - Permission analyzer (detect over-privileged accounts)
    - Dormant account detector (last-used tracking)
-   - Policy violation scanner (custom rules)
+   - Policy violation scanner (custom rules + OPA/Rego)
    - Anomaly detection (ML model for unusual access patterns)
 
 3. **Reporting Engine**
-   - Compliance report generator
+   - Compliance report generator (SOC 2, ISO 27001, Executive)
    - Risk scoring algorithm
    - Remediation recommendations
-   - Export to PDF/JSON/CSV
+   - Export to PDF/JSON/HTML
 
 4. **API Layer**
    - RESTful API (FastAPI)
-   - Authentication (OAuth2 + API keys)
-   - Rate limiting
+   - Authentication (JWT + API keys)
+   - Storage abstraction (in-memory or PostgreSQL + Redis)
    - Audit logging
 
 5. **CLI Tool**
-   - Scan commands
+   - Scan commands (aws, azure, gcp, sailpoint)
    - Report generation
    - CI/CD integration
    - Config management
@@ -70,10 +71,28 @@ AccessAudit provides:
 6. **Web Dashboard**
    - Real-time audit status
    - Risk visualization
-   - Policy management
-   - User/role explorer
+   - Scheduled scan management
+   - Notification configuration
+   - Remediation workflow
 
-## MVP Features (Phase 1)
+7. **Notification System**
+   - Slack (Block Kit)
+   - Microsoft Teams (Adaptive Cards)
+   - Generic Webhook (HMAC signing)
+   - Event-based routing with severity filtering
+
+8. **Scheduling System**
+   - Cron-based recurring scans
+   - Auto-analyze after scan
+   - Notification on completion/failure
+
+9. **Remediation Engine**
+   - Approval-gated state machine (PENDING → APPROVED → EXECUTING → COMPLETED)
+   - Action types: remove_policy, disable_account, enable_mfa, reduce_permissions, rotate_credentials
+   - Rollback support
+   - Bulk approve capability
+
+## Phase 1 Features (Complete)
 
 1. ✅ AWS IAM connector
 2. ✅ Permission analysis (detect over-privileged)
@@ -82,20 +101,40 @@ AccessAudit provides:
 5. ✅ JSON report output
 6. ✅ Docker deployment
 
-## Phase 2 Features
+## Phase 2 Features (Complete)
 
-- Azure AD + GCP connectors
-- ML-based anomaly detection
-- Web dashboard
-- Compliance report templates
-- Policy-as-code framework
+1. ✅ Azure AD + GCP connectors
+2. ✅ ML-based anomaly detection
+3. ✅ Web dashboard (HTMX + Tailwind)
+4. ✅ Compliance report templates (SOC 2, ISO 27001, Executive)
+5. ✅ Policy-as-code framework (OPA/Rego)
 
-## Phase 3 Features
+## Phase 2.5: Infrastructure (Complete)
 
-- SailPoint IIQ integration
-- Slack/Teams notifications
-- Scheduled scans
-- Remediation automation (with approval workflow)
+1. ✅ Database layer (SQLAlchemy 2.0 async + Alembic migrations)
+2. ✅ Redis cache with graceful degradation
+3. ✅ Storage abstraction (in-memory ↔ database backends)
+4. ✅ JWT + API key authentication
+5. ✅ CI pipeline with PostgreSQL + Redis service containers
+
+## Phase 3 Features (Complete)
+
+1. ✅ SailPoint IIQ connector (SCIM 2.0)
+2. ✅ Notification system (Slack, Teams, Webhook)
+3. ✅ Scheduled scans with cron expressions
+4. ✅ Remediation automation (approval-gated, with rollback)
+5. ✅ Dashboard pages for schedules, notifications, remediation
+
+## Phase 4 Ideas
+
+- SAML/OIDC SSO integration
+- Multi-tenant support
+- Remediation playbooks (composable action sequences)
+- Risk trend analysis over time
+- SIEM integration (Splunk, Elastic)
+- Terraform provider for policy-as-code
+- Kubernetes RBAC connector
+- Okta/Auth0 connector
 
 ## Success Metrics
 

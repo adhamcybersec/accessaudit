@@ -305,6 +305,35 @@ reporting:
     - json
   include_remediation: true
   output_dir: ./reports
+
+# Database (optional - uses in-memory if not set)
+# database:
+#   url: postgresql+asyncpg://accessaudit:password@localhost:5432/accessaudit
+
+# Redis cache (optional - no caching if not set)
+# redis:
+#   url: redis://localhost:6379/0
+
+# Authentication (optional - open API if require_auth is false)
+# auth:
+#   secret_key: ${AUTH_SECRET_KEY}
+#   token_expire_minutes: 60
+#   require_auth: false
+
+# Notifications
+# notifications:
+#   enabled: false
+#   providers:
+#     - type: slack
+#       webhook_url: https://hooks.slack.com/services/your/webhook/url
+#       min_severity: medium
+#       events: [scan_completed, critical_finding]
+#     - type: teams
+#       webhook_url: https://your-org.webhook.office.com/webhookb2/...
+#       min_severity: high
+#     - type: webhook
+#       webhook_url: https://your-service.com/webhooks/accessaudit
+#       min_severity: low
 """
 
     with open(output_path, "w") as f:
