@@ -45,6 +45,9 @@ dependencies = [
     "scikit-learn>=1.4.0",     # ML for anomaly detection
     "jinja2>=3.1.0",           # Template rendering
     "weasyprint>=61.0",        # PDF report generation
+    "bcrypt>=4.1.0",           # Password hashing
+    "PyJWT>=2.8.0",            # JWT tokens
+    "pydantic[email]>=2.6.0",  # Email validation
 ]
 
 [project.optional-dependencies]
