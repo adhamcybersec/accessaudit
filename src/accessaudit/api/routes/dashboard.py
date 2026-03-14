@@ -12,14 +12,16 @@ _templates_dir = Path(__file__).resolve().parent.parent / "templates"
 templates = Jinja2Templates(directory=str(_templates_dir))
 
 
-def _get_scans_dict(request: Request) -> dict:
+def _get_scans_dict(request: Request) -> dict:  # type: ignore[type-arg]
     """Get scans from legacy dict (dashboard uses dict access pattern)."""
-    return request.app.state.scans
+    result: dict = request.app.state.scans  # type: ignore[type-arg]
+    return result
 
 
-def _get_analyses_dict(request: Request) -> dict:
+def _get_analyses_dict(request: Request) -> dict:  # type: ignore[type-arg]
     """Get analyses from legacy dict."""
-    return request.app.state.analyses
+    result: dict = request.app.state.analyses  # type: ignore[type-arg]
+    return result
 
 
 @router.get("/")

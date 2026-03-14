@@ -63,6 +63,7 @@ dev = [
     "types-PyYAML>=6.0.12",
     "fakeredis>=2.21.0",
     "aiosqlite>=0.20.0",
+    "types-croniter>=2.0.0",
 ]
 
 azure = [

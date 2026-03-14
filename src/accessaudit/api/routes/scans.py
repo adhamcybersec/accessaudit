@@ -25,7 +25,7 @@ def _get_storage(request: Request) -> StorageBackend:
     """Get the storage backend from app state."""
     storage = getattr(request.app.state, "storage", None)
     if storage is not None:
-        return storage  # type: ignore[return-value]
+        return storage  # type: ignore[no-any-return]
     # Fallback to legacy in-memory dicts
     from accessaudit.services.storage import InMemoryStorage
 

@@ -26,11 +26,20 @@ def _serialize_scan(scan: ScanResult) -> dict[str, Any]:
 
 def _deserialize_scan(scan_db: ScanDB) -> ScanResult:
     """Convert ScanDB row to ScanResult."""
-    data = scan_db.scan_data or {}
+    data: dict[str, Any] = scan_db.scan_data or {}
 
     accounts = [Account(**a) for a in data.get("accounts", [])]
     permissions = {k: [Permission(**p) for p in v] for k, v in data.get("permissions", {}).items()}
     policies = [Policy(**p) for p in data.get("policies", [])]
+
+    # errors stored as JSONB (list or dict), normalize to list[str]
+    raw_errors = scan_db.errors
+    if isinstance(raw_errors, list):
+        errors: list[str] = [str(e) for e in raw_errors]
+    elif isinstance(raw_errors, dict):
+        errors = [str(v) for v in raw_errors.values()]
+    else:
+        errors = []
 
     return ScanResult(
         scan_id=str(scan_db.id),
@@ -40,14 +49,15 @@ def _deserialize_scan(scan_db: ScanDB) -> ScanResult:
         accounts=accounts,
         permissions=permissions,
         policies=policies,
-        errors=scan_db.errors or [],
+        errors=errors,
         status=scan_db.status,
     )
 
 
 def _deserialize_analysis(analysis_db: AnalysisDB) -> AnalysisResult:
     """Convert AnalysisDB row to AnalysisResult."""
-    findings_data = analysis_db.findings or []
+    raw_findings = analysis_db.findings
+    findings_data: list[dict[str, Any]] = raw_findings if isinstance(raw_findings, list) else []
     findings = [Finding(**f) for f in findings_data]
 
     return AnalysisResult(
@@ -127,7 +137,7 @@ class ScanRepository:
             row.account_count = len(scan.accounts)
             row.permission_count = sum(len(p) for p in scan.permissions.values())
             row.policy_count = len(scan.policies)
-            row.errors = scan.errors if scan.errors else None
+            row.errors = scan.errors if scan.errors else None  # type: ignore[assignment]
             row.scan_data = _serialize_scan(scan)
             await self.session.flush()
 

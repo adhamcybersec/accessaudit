@@ -38,6 +38,7 @@ async def update_notification_config(
     request: Request, body: NotificationConfigUpdate
 ) -> dict[str, Any]:
     """Update notification configuration."""
+    from accessaudit.notifications.base import BaseNotificationProvider
     from accessaudit.notifications.manager import NotificationManager
     from accessaudit.notifications.slack import SlackProvider
     from accessaudit.notifications.teams import TeamsProvider
@@ -51,6 +52,7 @@ async def update_notification_config(
         min_sev = prov_config.get("min_severity", "medium")
         events = prov_config.get("events")
 
+        provider: BaseNotificationProvider
         if prov_type == "slack":
             provider = SlackProvider(webhook_url=url, events=events)
         elif prov_type == "teams":
@@ -93,4 +95,5 @@ async def get_notification_history(request: Request) -> list[dict[str, Any]]:
     manager = getattr(request.app.state, "notification_manager", None)
     if not manager:
         return []
-    return manager.history[-100:]  # Last 100 entries
+    history: list[dict[str, Any]] = manager.history[-100:]
+    return history

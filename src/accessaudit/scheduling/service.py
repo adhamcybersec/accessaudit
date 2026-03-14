@@ -23,10 +23,13 @@ def _validate_cron(expression: str) -> bool:
 def _next_run_from_cron(cron_expression: str) -> datetime | None:
     """Calculate next run time from cron expression."""
     try:
-        from croniter import croniter
+        from croniter import croniter  # type: ignore[import-untyped]
 
         cron = croniter(cron_expression, datetime.now())
-        return cron.get_next(datetime)  # type: ignore[return-value]
+        result = cron.get_next(datetime)
+        if isinstance(result, datetime):
+            return result
+        return None
     except Exception:
         return None
 

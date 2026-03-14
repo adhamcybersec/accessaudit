@@ -5,15 +5,17 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
+from accessaudit.remediation.engine import RemediationEngine
+
 router = APIRouter(prefix="/api/v1/remediations", tags=["remediation"])
 
 
-def _get_engine(request: Request):  # type: ignore[no-untyped-def]
+def _get_engine(request: Request) -> RemediationEngine:
     """Get remediation engine from app state."""
     engine = getattr(request.app.state, "remediation_engine", None)
     if engine is None:
         raise HTTPException(status_code=503, detail="Remediation engine not initialized")
-    return engine
+    return engine  # type: ignore[no-any-return]
 
 
 class ApproveRequest(BaseModel):
@@ -69,7 +71,8 @@ async def get_remediation(request: Request, action_id: str) -> dict[str, Any]:
     action = engine.get_action(action_id)
     if not action:
         raise HTTPException(status_code=404, detail="Action not found")
-    return action.model_dump(mode="json")
+    result: dict[str, Any] = action.model_dump(mode="json")
+    return result
 
 
 @router.post("/{action_id}/approve")
@@ -82,7 +85,8 @@ async def approve_remediation(
         action = engine.approve(action_id, body.approved_by)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    return action.model_dump(mode="json")
+    result: dict[str, Any] = action.model_dump(mode="json")
+    return result
 
 
 @router.post("/{action_id}/reject")
@@ -93,7 +97,8 @@ async def reject_remediation(request: Request, action_id: str) -> dict[str, Any]
         action = engine.reject(action_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    return action.model_dump(mode="json")
+    result: dict[str, Any] = action.model_dump(mode="json")
+    return result
 
 
 @router.post("/{action_id}/execute")
@@ -104,7 +109,8 @@ async def execute_remediation(request: Request, action_id: str) -> dict[str, Any
         action = await engine.execute(action_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    return action.model_dump(mode="json")
+    result: dict[str, Any] = action.model_dump(mode="json")
+    return result
 
 
 @router.post("/{action_id}/rollback")
@@ -115,15 +121,16 @@ async def rollback_remediation(request: Request, action_id: str) -> dict[str, An
         action = await engine.rollback(action_id)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
-    return action.model_dump(mode="json")
+    result: dict[str, Any] = action.model_dump(mode="json")
+    return result
 
 
 @router.post("/bulk-approve")
 async def bulk_approve(request: Request, body: BulkApproveRequest) -> dict[str, Any]:
     """Approve multiple remediation actions at once."""
     engine = _get_engine(request)
-    approved = []
-    errors = []
+    approved: list[str] = []
+    errors: list[dict[str, str]] = []
 
     for action_id in body.action_ids:
         try:
